@@ -1,4 +1,5 @@
 import { Box, Button, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
+import { capitalize } from "@/lib/utils/string";
 
 const ACTIVE_COLOR = "blue.400";
 const BACKGROUND_COLOR = "gray.900";
@@ -30,7 +31,7 @@ export default function LanguageSelector({ language, onSelect, languageVersions 
                             }}
                             onClick={() => onSelect(lang)}
                         >
-                            {lang} <Text as="span" color="gray.600" fontSize="sm">&nbsp;({version})</Text>
+                            {capitalize(lang)} <Text as="span" color="gray.600" fontSize="sm">&nbsp;({version})</Text>
                         </MenuItem>
                     ))}
                 </MenuList>

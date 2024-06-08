@@ -8,6 +8,7 @@ import * as monaco from "monaco-editor";
 import LanguageSelector from "./LanguageSelector";
 import Output from "./Output";
 import { CODE_SNIPPETS } from "@/lib/constants/languages";
+import { capitalize } from "@/lib/utils/string";
 
 type Props = {
     languageVersions: { [key: string]: string | null };
@@ -32,7 +33,7 @@ export default function CodeEditor({ languageVersions }: Props) {
         <Box>
             <HStack spacing={4}>
                 <Box w="50%">
-                    <LanguageSelector language={language} onSelect={onSelect} languageVersions={languageVersions} />
+                    <LanguageSelector language={capitalize(language)} onSelect={onSelect} languageVersions={languageVersions} />
                     <Editor
                         height="75vh"
                         theme="vs-dark"
