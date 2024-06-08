@@ -6,9 +6,14 @@ import { Editor } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
 import LanguageSelector from "./LanguageSelector";
+import Output from "./Output";
 import { CODE_SNIPPETS } from "@/lib/constants/languages";
 
-export default function CodeEditor() {
+type Props = {
+    languageVersions: { [key: string]: string | null };
+}
+
+export default function CodeEditor({ languageVersions }: Props) {
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("python");
@@ -27,17 +32,18 @@ export default function CodeEditor() {
         <Box>
             <HStack spacing={4}>
                 <Box w="50%">
-                    <LanguageSelector language={language} onSelect={onSelect} />
+                    <LanguageSelector language={language} onSelect={onSelect} languageVersions={languageVersions} />
                     <Editor
                         height="75vh"
                         theme="vs-dark"
-                        language={language}
+                        language={language === "c++" ? "cpp" : language}
                         defaultValue={CODE_SNIPPETS[language as keyof typeof CODE_SNIPPETS]}
                         onMount={onMount}
                         value={value}
                         onChange={(newValue) => setValue(newValue || "")}
                     />
                 </Box>
+                <Output editorRef={editorRef} language={language} languageVersions={languageVersions} />
             </HStack>
         </Box>
     );
