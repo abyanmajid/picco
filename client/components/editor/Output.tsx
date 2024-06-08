@@ -1,6 +1,7 @@
 import { executeCode } from "@/actions/api";
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import * as monaco from "monaco-editor";
+import { IoPlay } from "react-icons/io5";
 
 type Props = {
     editorRef: React.RefObject<monaco.editor.IStandaloneCodeEditor>;
@@ -23,25 +24,16 @@ export default function Output({ editorRef, language, languageVersions }: Props)
     }
 
     return (
-        <Box w="50%">
-            <Text mb={2} fontSize="lg">Output</Text>
+        <Box>
             <Button
                 variant="outline"
                 colorScheme="green"
                 mb={4}
                 onClick={runCode}
+                leftIcon={<IoPlay />}
             >
-                Run Code
+                Run
             </Button>
-            <Box
-                height="75vh"
-                p={2}
-                border="1px solid"
-                borderRadius={4}
-                borderColor="#333"
-            >
-                test
-            </Box>
         </Box>
     )
 }

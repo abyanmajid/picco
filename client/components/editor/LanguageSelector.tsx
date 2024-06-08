@@ -13,10 +13,12 @@ type Props = {
 export default function LanguageSelector({ language, onSelect, languageVersions }: Props) {
 
     return (
-        <Box ml={2} mb={4}>
-            <Text mb={2} fontSize="lg">Language: </Text>
+        <Box mb={4}>
             <Menu isLazy>
-                <MenuButton as={Button}>
+                <MenuButton
+                    as={Button}
+                    colorScheme="teal"
+                >
                     {language}
                 </MenuButton>
                 <MenuList bg="#110c1b">
