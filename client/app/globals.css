@@ -1,0 +1,145 @@
+/* globals.css */
+/* @import "prism-themes/themes/prism-vsc-dark-plus"; */
+@import 'prism-themes/themes/prism-vsc-dark-plus.css';
+
+
+/* Basic reset */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+code,
+ul,
+ol,
+li,
+dl,
+dt,
+dd {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: #D1D5DB;
+    line-height: 1.6;
+}
+
+body {
+    background-color: #262525;
+}
+
+/* Headings */
+h1 {
+    font-size: 2em;
+    /* Reduced size */
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+h2 {
+    font-size: 1.75em;
+    /* Reduced size */
+    margin-bottom: 0.75em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+h3 {
+    font-size: 1.5em;
+    /* Reduced size */
+    margin-bottom: 1em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+h4 {
+    font-size: 1.25em;
+    /* Reduced size */
+    margin-bottom: 1.25em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+h5 {
+    font-size: 1.125em;
+    /* Reduced size */
+    margin-bottom: 1.5em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+h6 {
+    font-size: 1em;
+    margin-bottom: 1.75em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+/* Paragraphs */
+p {
+    font-size: 1em;
+    margin-bottom: 1.5em;
+    color: #D1D5DB;
+}
+
+/* Blockquotes */
+blockquote {
+    font-size: 1.25em;
+    margin: 1.5em 0;
+    padding-left: 1em;
+    border-left: 4px solid #4A5568;
+    color: #D1D5DB;
+}
+
+/* Lists */
+ul,
+ol {
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
+
+/* Code blocks */
+pre {
+    padding: 1em;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 1.5em;
+}
+
+code {
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    color: #F6E05E;
+}
+
+/* Inline code */
+p code {
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
+
+/* Links */
+a {
+    color: #3182CE;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Horizontal rule */
+hr {
+    border: 0;
+    border-top: 1px solid #4A5568;
+    margin: 2em 0;
+}
