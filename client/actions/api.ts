@@ -1,5 +1,4 @@
 import axios from "axios";
-import { version } from "os";
 
 type LanguageEntry = {
     language: string;
@@ -19,8 +18,6 @@ const api = {
 
 export async function getLanguageVersions(languages: string[]): Promise<{ [key: string]: string | null }> {
     const response = await api.piston.get("/runtimes");
-    console.log("API Response:", response.data);
-
     const versions: { [key: string]: string | null } = {};
 
     for (const language of languages) {
