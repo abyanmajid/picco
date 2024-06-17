@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "codemore.io",
   description: "Learn effectively by simply writing more code.",
 };
-// #262525
+
 export default function RootLayout({
   children,
 }: Readonly<{

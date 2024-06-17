@@ -23,14 +23,15 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
 } from '@chakra-ui/icons';
+import { FaGithub } from 'react-icons/fa';
 
 export default function Navbar() {
     const { isOpen, onToggle } = useDisclosure();
 
     return (
-        <Box>
+        <Box className="navbar">
             <Flex
-                bg={'#110E0E'} // Updated background color
+                bg={'#110E0E'}
                 color={useColorModeValue('gray.600', 'white')}
                 minH={'60px'}
                 py={{ base: 2 }}
@@ -54,7 +55,7 @@ export default function Navbar() {
                 </Flex>
                 <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
                     <Text
-                        textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
+                        textAlign={useBreakpointValue({ base: 'center', md: 'center' })}
                         fontFamily={'heading'}
                         color={useColorModeValue('gray.800', 'white')}
                         fontWeight={700}
@@ -124,7 +125,13 @@ const DesktopNav = () => {
                                     textDecoration: 'none',
                                     color: linkHoverColor,
                                 }}>
-                                {navItem.label}
+                                {navItem.label === "Source" ? (
+                                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                        {navItem.label} <FaGithub style={{ marginLeft: '8px' }} />
+                                    </span>
+                                ) : (
+                                    navItem.label
+                                )}
                             </Link>
                         </PopoverTrigger>
 
@@ -158,7 +165,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
             display={'block'}
             p={2}
             rounded={'md'}
-            _hover={{ bg: useColorModeValue('teal.50', 'gray.900') }}>
+            _hover={{ bg: useColorModeValue('teal.50', 'gray.900'), textDecoration: 'none' }}>
             <Stack direction={'row'} align={'center'}>
                 <Box>
                     <Text
@@ -270,7 +277,7 @@ const NAV_ITEMS: Array<NavItem> = [
         href: '#',
     },
     {
-        label: 'Contribute',
+        label: 'Source',
         href: 'https://github.com/abyanmajid/codemore-io',
     },
 ];
