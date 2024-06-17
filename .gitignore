@@ -16,3 +16,6 @@
 /client/.vercel
 /client/*.tsbuildinfo
 /client/next-env.d.ts
+
+# POSTGRES VOLUME
+/db-data

@@ -12,3 +12,7 @@ func (app *Config) HandleHealth(w http.ResponseWriter, r *http.Request) {
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
 }
+
+func (app *Config) HandleUser(w http.ResponseWriter, r *http.Request) {
+
+}

@@ -26,6 +26,18 @@ build-broker:
 	cd ./broker && env GOOS=linux CGO_ENABLED=0 go build -o ${BROKER_BINARY} ./cmd/api
 	@echo "[codemore.io] Broker has successfully been built!"
 
+# users-migrate-up: run goose migrate up for users database
+users-migrate-up:
+	@echo "Running goose up migration on users database..."
+	goose -dir ./broker/sql/migrations postgres postgresql://postgres:postgres@localhost:5432/users up
+	@echo "Successfully ran goose up migration!"
+
+# users-migrate-down: run goose migrate down for users database
+users-migrate-down:
+	@echo "Running goose down migration on users database..."
+	goose -dir ./broker/sql/migrations postgres postgresql://postgres:postgres@localhost:5432/users down
+	@echo "Successfully ran goose down migration!"
+
 # client: start client
 client:
 	@echo "[codemore.io] Starting client..."
