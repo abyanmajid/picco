@@ -7,38 +7,49 @@ package database
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, name, email, password, level, badges, is_banned, created_at, updated_at)
-VALUES (uuid_generate_v4(), $1, $2, $3, $4, $5, $6, NOW(), NOW())
-RETURNING id, name, email, password, level, badges, is_banned, created_at, updated_at
+INSERT INTO users (id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Name     string
-	Email    string
-	Password string
-	Level    int32
-	Badges   []string
-	IsBanned bool
+	ID        uuid.UUID
+	AuthType  string
+	Name      string
+	Email     string
+	Password  sql.NullString
+	Level     int32
+	Badges    []string
+	IsBanned  bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
+		arg.ID,
+		arg.AuthType,
 		arg.Name,
 		arg.Email,
 		arg.Password,
 		arg.Level,
 		pq.Array(arg.Badges),
 		arg.IsBanned,
+		arg.CreatedAt,
+		arg.UpdatedAt,
 	)
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.AuthType,
 		&i.Name,
 		&i.Email,
 		&i.Password,
@@ -61,7 +72,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, name, email, password, level, badges, is_banned, created_at, updated_at FROM users
+SELECT id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at FROM users
 `
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
@@ -75,6 +86,7 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 		var i User
 		if err := rows.Scan(
 			&i.ID,
+			&i.AuthType,
 			&i.Name,
 			&i.Email,
 			&i.Password,
@@ -98,7 +110,7 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, password, level, badges, is_banned, created_at, updated_at FROM users WHERE email = $1
+SELECT id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at FROM users WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -106,6 +118,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.AuthType,
 		&i.Name,
 		&i.Email,
 		&i.Password,
@@ -119,7 +132,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, name, email, password, level, badges, is_banned, created_at, updated_at FROM users WHERE id = $1
+SELECT id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
@@ -127,6 +140,7 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.AuthType,
 		&i.Name,
 		&i.Email,
 		&i.Password,
@@ -141,16 +155,17 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
-SET name = $2, email = $3, password = $4, level = $5, badges = $6, is_banned = $7, updated_at = NOW()
+SET auth_type = $2, name = $3, email = $4, password = $5, level = $6, badges = $7, is_banned = $8, updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, email, password, level, badges, is_banned, created_at, updated_at
+RETURNING id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at
 `
 
 type UpdateUserParams struct {
 	ID       uuid.UUID
+	AuthType string
 	Name     string
 	Email    string
-	Password string
+	Password sql.NullString
 	Level    int32
 	Badges   []string
 	IsBanned bool
@@ -159,6 +174,7 @@ type UpdateUserParams struct {
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, updateUser,
 		arg.ID,
+		arg.AuthType,
 		arg.Name,
 		arg.Email,
 		arg.Password,
@@ -169,6 +185,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.AuthType,
 		&i.Name,
 		&i.Email,
 		&i.Password,

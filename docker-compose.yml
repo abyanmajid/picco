@@ -13,6 +13,22 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    environment:
+      ENVIRONMENT: development
+      # PRODUCTION_USER_ENDPOINT:
+
+  user:
+    container_name: user
+    build:
+      context: ./user
+      dockerfile: ./user.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      ENVIRONMENT: development
+      # PRODUCTION_DB_URL:
 
   postgres:
     container_name: db-users

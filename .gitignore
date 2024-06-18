@@ -19,3 +19,13 @@
 
 # POSTGRES VOLUME
 /db-data
+
+# ENV VARIABLES
+.env
+*/.env
+
+# BROKER SERVICE
+./broker/broker
+
+# USER SERVICE
+./user/user
