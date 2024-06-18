@@ -5,7 +5,7 @@
   <img alt="cicd-badge" src="https://github.com/abyanmajid/codemore.io/actions/workflows/cicd.yml/badge.svg">
 </p>
 
-**codemore.io** is a distributed application designed to offer *free programming courses* that attempts to help you get out of *"tutorial hell"*, or simply *speed up your learning*, all by putting great emphasis on *simply writing more code*.
+**codemore.io** is a distributed application designed to offer *free programming courses* that attempts to help you get out of *"tutorial hell"*, or simply *speed up your learning*, all by putting great emphasis on *writing more code*.
 
 <!-- ### Live App  🚀 | Documentation 🔍 | Source 📦 -->
 
