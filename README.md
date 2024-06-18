@@ -9,11 +9,6 @@
 
 <!-- ### Live App  🚀 | Documentation 🔍 | Source 📦 -->
 
-## Table of Contents
-
-1. [Architecture](#architecture)
-2. [Contributing](#contributing)
-
 ## Architecture
 
 All client requests are sent to the `broker` service (which serves as an API gateway) with a JSON payload. The `broker` service will then redirect this request via `gRPC` to the correct microservice. The following `mermaid` visualizer depicts the architecture:
