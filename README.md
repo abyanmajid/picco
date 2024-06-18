@@ -26,7 +26,7 @@ graph TD
     Broker <-->|gRPC| Mail["<b>Mail</b><br>(Docker)"]
     Broker <-->|gRPC| Judge["<b>Judge</b><br>(Docker)"]
     Broker <-->|gRPC| Compiler["<b>Compiler</b><br>(Docker)"]
-    User -->|gRPC| Postgres["<b>Postgres</b><br>(Docker)"]
+    User -->|gRPC| PostgreSQL["<b>PostgreSQL</b><br>(Docker)"]
     Notification -->|gRPC| MongoDB["<b>MongoDB</b><br>(Docker)"]
     Mail -->|gRPC| Mailhog["<b>Mailhog</b><br>(Docker)"]
 ```
