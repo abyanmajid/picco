@@ -41,7 +41,7 @@ There are currently 6 API microservices:
 2. Open `docker-compose-yml` and make sure all `ENVIRONMENT` environment variables are set to `"development"`
 3. Run `make up-build` to pull all required docker images, build binaries, and run all backend microservices in docker containers
 4. To set up the frontend client, run `cd web/ui && npm i` from the root to install dependencies
-5. Run `cp .env.default` to copy over default environment variables. Make sure `ENVIRONMENT` is set to `"development"`
+5. Run `cp .env.default .env && rm -rf .env.default` to copy over default environment variables. Make sure `ENVIRONMENT` is set to `"development"`
 6. Run `npm run dev` to start the frontend client at `localhost:3000`
 7. Refer to the documentation as you make changes
 8. Submit a pull request to `staging` when you are done.
