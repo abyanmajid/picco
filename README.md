@@ -47,6 +47,6 @@ There are currently 6 API microservices:
 8. Submit a pull request to `staging` when you are done.
 
 **Note on languages:** Since all backend microservices communicate via `gRPC`, all languages that have support for compiling `.proto` files are welcome. To compile `.proto` in Go, `cd` to the directory where your `.proto` file lives in and run the following:
-```
+```bash
 protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative <filename>.proto
 ```
