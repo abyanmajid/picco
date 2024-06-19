@@ -1,11 +1,18 @@
-# codemore.io (WIP)
-
-<p>
-  <a href="https://github.com/abyanmajid/codemore.io/blob/main/LICENSE"><img alt="GPL-3.0 License" src="https://img.shields.io/badge/License-GPL%203.0-blue.svg"></a>
-  <img alt="cicd-badge" src="https://github.com/abyanmajid/codemore.io/actions/workflows/cicd.yml/badge.svg">
+<p align="center">
+  <img src="https://github.com/abyanmajid/codemore.io/assets/108279046/040ecbb0-16a1-4dde-ba37-c06d66a80b80" width="75%" height="auto">
 </p>
 
-**codemore.io** is a distributed application designed to offer *free programming courses* that attempts to help you get out of *"tutorial hell"*, or simply *speed up your learning*, all by putting great emphasis on *writing more code*.
+<p align="center">
+  <a href="https://github.com/abyanmajid/codemore.io/blob/main/LICENSE"><img alt="GPL-3.0 License" src="https://img.shields.io/badge/License-GPL%203.0-blue.svg"></a>
+  <img alt="cicd-badge" src="https://github.com/abyanmajid/codemore.io/actions/workflows/cicd.yml/badge.svg">
+  <img alt="Go" src="https://img.shields.io/badge/Go-%2300ADD8.svg?style=flat&logo=go&logoColor=white">
+  <img alt="Next JS" src="https://img.shields.io/badge/Next-black?style=flat&logo=next.js&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white">
+  <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat&logo=Kubernetes&logoColor=white">
+</p>
+<p align="center">
+  <b>codemore.io</b> is a distributed application designed to offer <i>free programming courses</i> that attempts to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by   putting great emphasis on <i>writing more code</i>.
+</p>
 
 <!-- ### Live App  🚀 | Documentation 🔍 | Source 📦 -->
 
