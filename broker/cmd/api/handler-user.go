@@ -2,10 +2,16 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/abyanmajid/codemore.io/broker/user"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func (api *Config) HandleHealth(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +35,7 @@ func (api *Config) HandleUser(w http.ResponseWriter, r *http.Request) {
 
 	switch requestPayload.Action {
 	case "create-user":
-		api.createUser(w, requestPayload.Data)
+		api.CreateUserViaGRPC(w, requestPayload.Data)
 	default:
 		api.errorJSON(w, errors.New("unknown action"))
 	}
@@ -69,6 +75,38 @@ func (api *Config) createUser(w http.ResponseWriter, userData UserPayload) {
 	var payload jsonResponse
 	payload.Error = false
 	payload.Message = "Successfully created user #" + userData.ID
+
+	api.writeJSON(w, http.StatusOK, payload)
+}
+
+func (api *Config) CreateUserViaGRPC(w http.ResponseWriter, requestPayload UserPayload) {
+
+	conn, err := grpc.Dial("user:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer conn.Close()
+
+	c := user.NewUserServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	_, err = c.CreateUser(ctx, &user.CreateUserRequest{
+		AuthType: requestPayload.AuthType,
+		Name:     requestPayload.Name,
+		Email:    requestPayload.Email,
+		Password: requestPayload.Password,
+	})
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "Successfully created user #" + requestPayload.ID + " via GRPC"
 
 	api.writeJSON(w, http.StatusOK, payload)
 }

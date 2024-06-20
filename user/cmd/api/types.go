@@ -11,3 +11,10 @@ type jsonResponse struct {
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
 }
+
+type CreateUserPayload struct {
+	AuthType string `json:"auth_type"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

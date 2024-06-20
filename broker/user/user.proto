@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/user";
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+message CreateUserRequest {
+    string auth_type = 1;
+    string name = 2;
+    string email = 3;
+    string password = 4;
+}
+
+message CreateUserResponse {
+    string id = 1;
+    string auth_type = 2;
+    string name = 3;
+    string email = 4;
+    string password = 5;
+    int32 level = 6;
+    repeated string badges = 7;
+    bool is_banned = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}

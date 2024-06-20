@@ -15,6 +15,7 @@ import (
 )
 
 const PORT = "80"
+const GRPC_PORT = "50001"
 const DEFAULT_DB_URL = "host=postgres port=5432 user=postgres password=postgres dbname=users sslmode=disable timezone=UTC connect_timeout=5"
 
 var counts int64
@@ -40,6 +41,8 @@ func main() {
 	api := Config{
 		DB: database.New(conn),
 	}
+
+	go api.gRPCListen()
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", PORT),

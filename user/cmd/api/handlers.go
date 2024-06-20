@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -34,8 +33,6 @@ func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Received payload: %+v\n", requestPayload)
-
 	user, err := api.DB.CreateUser(r.Context(), database.CreateUserParams{
 		ID:        uuid.New(),
 		AuthType:  requestPayload.AuthType,
@@ -50,7 +47,6 @@ func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		fmt.Println("ERR:", err)
 		api.errorJSON(w, err, http.StatusBadRequest)
 		return
 	}
