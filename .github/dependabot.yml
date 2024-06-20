@@ -3,9 +3,9 @@ updates:
   - package-ecosystem: npm
     directory: "/web/ui"
     schedule:
-      interval: daily
+      interval: weekly
 
   - package-ecosystem: gomod
     directory: "/cmd/api"
     schedule:
-      interval: daily
+      interval: weekly
