@@ -4,8 +4,40 @@ updates:
     directory: "/web/ui"
     schedule:
       interval: weekly
+    target-branch: staging
 
   - package-ecosystem: gomod
-    directory: "/cmd/api"
+    directory: "/broker"
     schedule:
       interval: weekly
+    target-branch: staging
+
+  - package-ecosystem: gomod
+    directory: "/compiler"
+    schedule:
+      interval: weekly
+    target-branch: staging
+
+  - package-ecosystem: gomod
+    directory: "/judge"
+    schedule:
+      interval: weekly
+    target-branch: staging
+
+  - package-ecosystem: gomod
+    directory: "/mail"
+    schedule:
+      interval: weekly
+    target-branch: staging
+
+  - package-ecosystem: gomod
+    directory: "/notification"
+    schedule:
+      interval: weekly
+    target-branch: staging
+
+  - package-ecosystem: gomod
+    directory: "/user"
+    schedule:
+      interval: weekly
+    target-branch: staging
