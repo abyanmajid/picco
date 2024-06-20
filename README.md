@@ -11,7 +11,7 @@
   <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat&logo=Kubernetes&logoColor=white">
 </p>
 <p align="center">
-  <b>codemore.io</b> is a distributed application designed to offer <i>free programming courses</i> that attempts to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by   putting great emphasis on <i>writing more code</i>.
+  <b>codemore.io</b> is a distributed application designed to offer <i>free programming courses</i> that attempts to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by   putting great emphasis on <i>writing more code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
 </p>
 
 <!-- ### Live App  🚀 | Documentation 🔍 | Source 📦 -->
