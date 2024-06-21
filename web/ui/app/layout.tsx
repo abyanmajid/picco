@@ -1,28 +1,59 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
+import { Metadata, Viewport } from "next";
+import clsx from "clsx";
 
-import { Providers } from "@/lib/chakra/providers";
+import { Providers } from "./providers";
+
+import { siteConfig } from "@/config/site";
+import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/layout/Navbar";
-
-const inter = Inter({ subsets: ["latin"] });
+import Footer from "@/components/layout/Footer";
+import Container from "@/components/common/Container";
+import { HeroHighlight } from "@/components/ui/hero-highlight";
+import { motion } from "framer-motion";
 
 export const metadata: Metadata = {
-  title: "codemore.io",
-  description: "Learn effectively by simply writing more code.",
+  title: {
+    default: siteConfig.name,
+    template: `%s - ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={inter.className} style={{ backgroundColor: '#262525' }}>
-        <Providers>
-          <Navbar />
-          {children}
+    <html suppressHydrationWarning lang="en">
+      <head />
+      <body
+        className={clsx(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+        )}
+      >
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+          <Container className="relative flex flex-col h-screen">
+            <Navbar />
+            <HeroHighlight>
+              <main className="container mx-auto max-w-full px-6 flex-grow">
+                {children}
+              </main>
+            </HeroHighlight>
+            <Footer />
+          </Container>
         </Providers>
       </body>
     </html>
