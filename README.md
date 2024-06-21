@@ -45,7 +45,7 @@ There are currently 6 API microservices:
 ## Contributing
 
 1. Get started by forking this repository, clone it to your local device, and create a new branch by running `git checkout -b <branch_name>`
-2. Open `docker-compose-yml` and make sure all `ENVIRONMENT` environment variables are set to `"development"`
+2. Open `docker-compose.yml` and make sure all `ENVIRONMENT` environment variables are set to `"development"`
 3. Run `make up-build` to pull all required docker images, build binaries, and run all backend microservices in docker containers
 4. To set up the frontend client, run `cd web/ui && npm i` from the root to install dependencies
 5. Run `cp .env.default .env && rm -rf .env.default` to copy over default environment variables. Make sure `ENVIRONMENT` is set to `"development"`
