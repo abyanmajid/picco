@@ -44,7 +44,7 @@ There are currently 6 API microservices:
 
 ## Design Choices
 
-- Token-based authentication with JWT
+- Token-based authentication with JWT and OAuth2
 - Role-Based Access Control (RBAC) Authorization via embedding roles in JWT
 - Asynchronous communication between microservices via gRPC, and REST between the client and broker
 - Sandboxing of code execution in a docker container
