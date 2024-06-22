@@ -10,15 +10,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func (api *Config) HandleHealth(w http.ResponseWriter, r *http.Request) {
-	// payload := jsonResponse{
-	// 	Error:   false,
-	// 	Message: "Hello, World!",
-	// }
-
-	// _ = api.writeJSON(w, http.StatusOK, payload)
-}
-
 func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
 		AuthType string `json:"auth_type"`
