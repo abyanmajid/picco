@@ -50,7 +50,7 @@ There are currently 6 API microservices:
 - Sandboxing of code execution in a docker container
 - Server-side caching with Memcache
 - Static rendering and serving of content
-- Centralized logging
+- Centralized structured logging
 
 ## Contributing
 
