@@ -1,16 +1,21 @@
-import withMDX from "@next/mdx";
-import remarkPrism from "remark-prism";
+import fs from "node:fs";
+import nextMDX from "@next/mdx";
+import rehypePrettyCode from "rehype-pretty-code";
 
-const withMDXConfig = withMDX({
+/** @type {import('rehype-pretty-code').Options} */
+const options = {
+    theme: "dark-plus"
+};
+
+const withMDX = nextMDX({
     extension: /\.mdx?$/,
     options: {
-        remarkPlugins: [remarkPrism],
+        remarkPlugins: [],
+        rehypePlugins: [[rehypePrettyCode, options]],
     },
 });
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    pageExtensions: ["ts", "tsx", "js", "jsx", "mdx"],
-};
+const nextConfig = { reactStrictMode: true };
 
-export default withMDXConfig(nextConfig);
+export default withMDX(nextConfig);

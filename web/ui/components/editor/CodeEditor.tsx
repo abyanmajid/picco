@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { useState, useRef } from "react";
-import { Box, HStack, Flex, Spacer, useToast, Text } from "@chakra-ui/react";
+import React, { useState, useRef } from "react"
 import { Editor } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-
+import { CODE_SNIPPETS } from "@/utils/constants";
+import Container from "../common/Container";
+import { Button } from "@nextui-org/button";
 import LanguageSelector from "./LanguageSelector";
-import Output from "./Output";
+import { capitalize } from "@/utils/helpers";
 import IOSwitcher from "./IOSwitcher";
-import { CODE_SNIPPETS } from "@/lib/constants/languages";
-import { capitalize } from "@/lib/utils/string";
+import Output from "./Output";
 import { executeCode } from "@/actions/api";
 
 type Props = {
@@ -17,8 +17,6 @@ type Props = {
 }
 
 export default function CodeEditor({ languageVersions }: Props) {
-    const toast = useToast();
-
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("python");
@@ -37,12 +35,12 @@ export default function CodeEditor({ languageVersions }: Props) {
                 setOutput(result.output.split("\n"));
                 result.stderr ? setIsError(true) : setIsError(false)
             } catch (error) {
-                toast({
-                    title: "Unexpected error occurred.",
-                    description: "Please try again later.",
-                    status: "error",
-                    duration: 6000,
-                })
+                // toast({
+                //     title: "Unexpected error occurred.",
+                //     description: "Please try again later.",
+                //     status: "error",
+                //     duration: 6000,
+                // })
             }
             finally {
                 setIsLoading(false);
@@ -61,37 +59,36 @@ export default function CodeEditor({ languageVersions }: Props) {
     }
 
     return (
-        <Box>
-            <Flex>
-                <HStack flex="1" overflow="auto" spacing={2}>
-                    <LanguageSelector language={capitalize(language)} onSelect={onSelect} languageVersions={languageVersions} />
+        <Container>
+            <Container className="grid grid-cols-2 mb-4">
+                <Container className="flex items-center mr">
+                    <LanguageSelector languageVersions={languageVersions} />
                     <IOSwitcher outputShown={outputShown} setOutputShown={setOutputShown} />
-                </HStack>
-                <Spacer />
-                <Output runCode={runCode} isLoading={isLoading} />
-            </Flex>
+                </Container>
+                <Container className="justify-right text-right">
+                    <Output runCode={runCode} isLoading={isLoading} />
+                </Container>
+            </Container>
             {
                 outputShown ?
-                    <Box
-                        height="75vh"
-                        p={2}
-                        border="1px solid"
-                        borderRadius={4}
-                        color={
-                            isError ? "red.400" : ""
-                        }
-                        borderColor={
-                            isError ? "red.500" : "#333"
-                        }
+                    <div
+                        style={{
+                            height: "75vh",
+                            padding: "16px",
+                            border: "1px solid",
+                            borderRadius: "4px",
+                            color: isError ? "red" : "",
+                            borderColor: isError ? "darkred" : "#333"
+                        }}
                     >
                         {
                             output ?
                                 output.map(
-                                    (line: string, i: number) => <Text key={i}>{line}</Text>
+                                    (line: string, i: number) => <p key={i}>{line}</p>
                                 )
                                 : 'Click "Run" to run your solution...'
                         }
-                    </Box>
+                    </div>
                     :
                     <Editor
                         height="75vh"
@@ -108,7 +105,6 @@ export default function CodeEditor({ languageVersions }: Props) {
                         }}
                     />
             }
-
-        </Box>
+        </Container>
     );
 }

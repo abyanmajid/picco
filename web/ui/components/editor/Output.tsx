@@ -1,7 +1,4 @@
-import { useState } from "react";
-import { executeCode } from "@/actions/api";
-import { Box, Button } from "@chakra-ui/react";
-import * as monaco from "monaco-editor";
+import { Button } from "@nextui-org/button";
 import { IoPlay } from "react-icons/io5";
 
 type Props = {
@@ -12,17 +9,13 @@ type Props = {
 export default function Output({ runCode, isLoading }: Props) {
 
     return (
-        <Box>
-            <Button
-                isLoading={isLoading}
-                variant="outline"
-                colorScheme="green"
-                mb={4}
-                onClick={runCode}
-                leftIcon={<IoPlay />}
-            >
-                Run
-            </Button>
-        </Box>
+        <Button
+            isLoading={isLoading}
+            variant="ghost"
+            color="primary"
+            onClick={runCode}
+        >
+            <IoPlay /> Run
+        </Button>
     )
 }

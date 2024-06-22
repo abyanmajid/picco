@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Button } from "@nextui-org/button"
 import { LuTerminal } from "react-icons/lu";
 
 type Props = {
@@ -12,15 +12,13 @@ export default function IOSwitcher({ outputShown, setOutputShown }: Props) {
     }
 
     return (
-        <Box>
-            <Button
-                colorScheme="gray"
-                mb={4}
-                onClick={toggleOutput}
-                leftIcon={<LuTerminal />}
-            >
-                {outputShown ? "Code" : "Output"}
-            </Button>
-        </Box>
+        <Button
+            className="ml-1"
+            variant="bordered"
+            color="default"
+            onClick={toggleOutput}
+        >
+            <LuTerminal /> {outputShown ? "Output" : "Code"}
+        </Button>
     );
 }

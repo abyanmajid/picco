@@ -1,124 +1,118 @@
-/* globals.css */
-@import 'prism-themes/themes/prism-vsc-dark-plus.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.navbar * {
-    margin-bottom: 0 !important;
+.rehype-code-title {
+    @apply px-5 py-3 font-mono text-sm font-bold text-neutral-800 bg-neutral-100 border border-b-0 border-neutral-300 rounded-t-lg dark:text-neutral-200 dark:border-neutral-700 dark:bg-neutral-900;
 }
 
-/* Basic reset */
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-code,
-ul,
-ol,
-li,
-dl,
-dt,
-dd {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-    color: #D1D5DB;
-    line-height: 1.5;
+.rehype-code-title+pre {
+    @apply mt-0 rounded-t-none;
 }
 
-body {
-    background-color: #262525;
+.prose .anchor {
+    @apply absolute invisible no-underline delay-[50ms] transition-all -ml-10 pr-2 cursor-pointer;
 }
 
-/* Headings */
-h1 {
-    font-size: 2em;
-    /* Reduced size */
-    margin-bottom: 0.5em;
-    font-weight: bold;
-    color: #FFFFFF;
+.anchor:hover {
+    @apply visible;
 }
 
-h2 {
-    font-size: 1.25em;
-    /* Reduced size */
-    margin-bottom: 0.75em;
-    font-weight: bold;
-    color: #FFFFFF;
+.prose a {
+    @apply transition-all;
 }
 
-h3 {
-    font-size: 1em;
-    /* Reduced size */
-    margin-bottom: 1em;
-    font-weight: bold;
-    color: #FFFFFF;
+.prose .anchor:after {
+    @apply text-neutral-300 dark:text-neutral-700;
+    content: "#";
 }
 
-/* Paragraphs */
-p {
-    font-size: 1em;
-    margin-bottom: 1.5em;
-    color: #D1D5DB;
+.prose *:hover>.anchor {
+    @apply visible;
 }
 
-/* Blockquotes */
-blockquote {
-    font-size: 1.25em;
-    margin: 1.5em 0;
-    padding-left: 1em;
-    border-left: 4px solid #4A5568;
-    color: #D1D5DB;
+.prose pre {
+    @apply border shadow-md border-neutral-300 bg-neutral-200 dark:border-neutral-700 dark:bg-neutral-800;
 }
 
-/* Lists */
-ul,
-ol {
-    margin-bottom: 1.5em;
-    padding-left: 1.5em;
+.prose code {
+    @apply font-mono text-neutral-800 dark:text-neutral-200 px-1 py-0.5 border border-neutral-400 dark:border-neutral-800 rounded-lg bg-neutral-300 dark:bg-neutral-800;
 }
 
-li {
-    margin-bottom: 0.5em;
+.prose pre code {
+    @apply text-neutral-800 dark:text-neutral-200 p-0;
+    border: initial;
 }
 
-/* Code blocks */
-pre {
-    padding: 1em;
-    border-radius: 4px;
-    overflow-x: auto;
-    margin-bottom: 1.5em;
+.code-line {
+    @apply bg-neutral-200 dark:bg-neutral-800;
 }
 
-code {
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
-    color: #F6E05E;
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata,
+.token.console {
+    @apply text-neutral-700 dark:text-neutral-300;
 }
 
-/* Inline code */
-p code {
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
+.token.punctuation {
+    @apply text-blue-400;
 }
 
-/* Links */
-a {
-    color: #3182CE;
-    text-decoration: none;
+.token.number,
+.token.symbol,
+.token.boolean,
+.token.constant,
+.token.property,
+.token.tag,
+.token.deleted {
+    @apply text-blue-500;
 }
 
-a:hover {
-    text-decoration: underline;
+.token.string {
+    @apply text-blue-600;
 }
 
-/* Horizontal rule */
-hr {
-    border: 0;
-    border-top: 1px solid #4A5568;
-    margin: 2em 0;
+.token.attr-name,
+.token.builtin,
+.token.char,
+.token.selector,
+.token.inserted {
+    @apply text-purple-500;
+}
+
+.token.entity,
+.token.important,
+.token.operator,
+.token.regex,
+.token.url,
+.token.variable,
+.language-css .token.string,
+.style .token.string {
+    @apply text-yellow-900 dark:text-yellow-300;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    @apply text-red-600;
+}
+
+.token.function,
+.token.class-name {
+    @apply text-purple-500;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    @apply text-neutral-800 dark:text-neutral-200;
+}
+
+blockquote p {
+    @apply font-mono;
+}
+
+blockquote p::before {
+    content: "" !important;
 }
