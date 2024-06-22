@@ -18,6 +18,42 @@ module.exports = {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-geist-mono)"],
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            'code': {
+              backgroundColor: '#343942',
+              color: '#ffffff',
+              padding: '0.1em 0.3em',
+              borderRadius: '0.25rem',
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            },
+            'code::before': {
+              content: 'none',
+            },
+            'code::after': {
+              content: 'none',
+            },
+            'pre code': {
+              backgroundColor: 'transparent',
+              padding: '0',
+              borderRadius: '0',
+              color: 'inherit',
+            },
+            'pre': {
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            },
+          },
+        },
+        dark: {
+          css: {
+            'code': {
+              backgroundColor: '#343942',
+              color: '#ffffff',
+            },
+          },
+        },
+      }),
     },
   },
   darkMode: "class",
@@ -36,6 +72,7 @@ module.exports = {
         { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
       );
     },
+    require("@tailwindcss/typography")
   ]
 }
 
