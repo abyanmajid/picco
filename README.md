@@ -42,6 +42,16 @@ There are currently 6 API microservices:
 - `judge`: A microservice responsible for running test cases on code outputs
 - `compiler`: A microservice responsible for compiling user-submitted code
 
+## Design Choices
+
+- Token-based authentication with JWT
+- Role-Based Access Control (RBAC) Authorization via embedding roles in JWT
+- Asynchronous communication between microservices via gRPC, and REST between the client and broker
+- Sandboxing of code execution in a docker container
+- Server-side caching with Memcache
+- Static rendering and serving of content
+- Centralized logging
+
 ## Contributing
 
 1. Get started by forking this repository, clone it to your local device, and create a new branch by running `git checkout -b <branch_name>`
