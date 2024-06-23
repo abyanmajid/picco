@@ -22,32 +22,30 @@ All client requests are sent to the `broker` service (which serves as an API gat
 
 ```mermaid
 graph TD
+    Client <--> |REST| Pusher
     Client["<b>Client</b>"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
     Client <--> |REST| Auth0
     Broker <-->|gRPC| User["<b>User</b><br>(Docker)"]
     Broker <-->|gRPC| Courses["<b>Courses</b><br>(Docker)"]
     Broker <-->|gRPC| Progression["<b>Progression</b><br>(Docker)"]
-    Broker <-->|gRPC| Notification["<b>Notification</b><br>(Docker)"]
     Broker <-->|gRPC| Mail["<b>Mail</b><br>(Docker)"]
     Broker <-->|gRPC| Judge["<b>Judge</b><br>(Docker)"]
     Broker <-->|gRPC| Compiler["<b>Compiler</b><br>(Docker)"]
     User -->|gRPC| PostgreSQL["<b>PostgreSQL</b>"]
     Courses --> |gRPC| MongoDB["<b>MongoDB</b>"]
     Progression --> |gRPC| MongoDB["<b>MongoDB</b>"]
-    Notification -->|gRPC| MongoDB["<b>MongoDB</b>"]
     Mail -->|gRPC| Mailhog["<b>Mailhog</b><br>(Docker)"]
 ```
 
-There are currently 8 API microservices:
+There are currently 7 API microservices:
 
 1. `broker`: An API gateway to proxy requests to the corresponding service
 2. `user`: A microservice responsible for CRUD operations on user information
 3. `courses`: A microservice responsible for CRUD operations on course contents
 4. `progression`: A microservice responsible for fetching and updating user progress on courses
-5. `notification`: A microservice responsible for logging and retrieving notifications
-6. `mail`: A microservice responsible for sending mails
-7. `judge`: A microservice responsible for running test cases on code outputs
-8. `compiler`: A microservice responsible for compiling user-submitted code
+5. `mail`: A microservice responsible for sending mails
+6. `judge`: A microservice responsible for running test cases on code outputs
+7. `compiler`: A microservice responsible for compiling user-submitted code
 
 ## Design Choices
 
