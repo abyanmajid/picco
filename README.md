@@ -44,13 +44,14 @@ There are currently 6 API microservices:
 
 ## Design Choices
 
-- Token-based authentication with JWT and OAuth2
-- Role-Based Access Control (RBAC) Authorization via embedding roles in JWT
-- Asynchronous communication between microservices via gRPC, and REST between the client and broker
+- Token-based authentication with JWT
+- Role-Based Access Control (RBAC) Authorization
+- Asynchronous communication between microservices via gRPC
+- Synchronous communication between client and broker via REST
 - Sandboxing of code execution in a docker container
 - Server-side caching with Memcache
+- Centralized structured logging with ELK Stack
 - Static rendering and serving of content
-- Centralized structured logging
 
 ## Contributing
 
