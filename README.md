@@ -39,15 +39,16 @@ graph TD
     Mail -->|gRPC| Mailhog["<b>Mailhog</b><br>(Docker)"]
 ```
 
-There are currently 7 API microservices:
+There are currently 8 API microservices:
 
 1. `broker`: An API gateway to proxy requests to the corresponding service
 2. `user`: A microservice responsible for CRUD operations on user information
 3. `courses`: A microservice responsible for CRUD operations on course contents
 4. `progression`: A microservice responsible for fetching and updating user progress on courses
 5. `mail`: A microservice responsible for sending mails
-6. `judge`: A microservice responsible for running test cases on code outputs
-7. `compiler`: A microservice responsible for compiling user-submitted code
+6. `notification`: A microservice responsible for 
+7. `judge`: A microservice responsible for running test cases on code outputs
+8. `compiler`: A microservice responsible for compiling user-submitted code
 
 ## Design Choices
 
