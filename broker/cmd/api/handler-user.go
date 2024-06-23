@@ -223,7 +223,7 @@ func (api *Service) HandleDeleteUserById(w http.ResponseWriter, r *http.Request)
 	defer client.Conn.Close()
 	defer client.Cancel()
 
-	msg, err := client.Client.DeleteUserById(client.Ctx, &user.DeleteUserByIdRequest{
+	_, err = client.Client.DeleteUserById(client.Ctx, &user.DeleteUserByIdRequest{
 		Id: userID,
 	})
 
@@ -235,7 +235,7 @@ func (api *Service) HandleDeleteUserById(w http.ResponseWriter, r *http.Request)
 
 	var responsePayload JsonResponse
 	responsePayload.Error = false
-	responsePayload.Data = msg.Message
+	responsePayload.Message = "Successfully deleted user #" + userID
 
 	api.Log.Info("User deleted successfully", "user_id", userID)
 	api.writeJSON(w, http.StatusOK, responsePayload)
