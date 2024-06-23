@@ -11,7 +11,7 @@
   <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat&logo=Kubernetes&logoColor=white">
 </p>
 <p align="center">
-  <b>codemore.io</b> is a distributed application designed to offer <i>free programming courses</i> that attempts to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by   putting great emphasis on <i>writing more code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
+  <b>codemore.io</b> is a distributed app that offers <i>free programming courses</i> in attempt to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by putting great emphasis on <i>writing lots of code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
 </p>
 
 <!-- <h3 align="center"> Live App 🚀 | Demo 📹 | Documentation 🔍 | Source 📦 </h3> -->
@@ -22,35 +22,41 @@ All client requests are sent to the `broker` service (which serves as an API gat
 
 ```mermaid
 graph TD
-    Client["<b>Client</b><br>(codemore.io)"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
+    Client["<b>Client</b>"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
+    Client <--> |REST| Auth0
     Broker <-->|gRPC| User["<b>User</b><br>(Docker)"]
+    Broker <-->|gRPC| Courses["<b>Courses</b><br>(Docker)"]
+    Broker <-->|gRPC| Progression["<b>Progression</b><br>(Docker)"]
     Broker <-->|gRPC| Notification["<b>Notification</b><br>(Docker)"]
     Broker <-->|gRPC| Mail["<b>Mail</b><br>(Docker)"]
     Broker <-->|gRPC| Judge["<b>Judge</b><br>(Docker)"]
     Broker <-->|gRPC| Compiler["<b>Compiler</b><br>(Docker)"]
-    User -->|gRPC| PostgreSQL["<b>PostgreSQL</b><br>(Docker)"]
-    Notification -->|gRPC| MongoDB["<b>MongoDB</b><br>(Docker)"]
+    User -->|gRPC| PostgreSQL["<b>PostgreSQL</b>"]
+    Courses --> |gRPC| MongoDB["<b>MongoDB</b>"]
+    Progression --> |gRPC| MongoDB["<b>MongoDB</b>"]
+    Notification -->|gRPC| MongoDB["<b>MongoDB</b>"]
     Mail -->|gRPC| Mailhog["<b>Mailhog</b><br>(Docker)"]
 ```
 
-There are currently 6 API microservices:
+There are currently 8 API microservices:
 
-- `broker`: An API gateway to process all user requests via the `REST` communication protocol
-- `user`: A microservice responsible for authentication, authorization, and changing user information and metrics
-- `notification`: A microservice responsible for logging and retrieving notifications
-- `mail`: A microservice responsible for sending mails
-- `judge`: A microservice responsible for running test cases on code outputs
-- `compiler`: A microservice responsible for compiling user-submitted code
+1. `broker`: An API gateway to proxy requests to the corresponding service
+2. `user`: A microservice responsible for CRUD operations on user information
+3. `courses`: A microservice responsible for CRUD operations on course contents
+4. `progression`: A microservice responsible for fetching and updating user progress on courses
+5. `notification`: A microservice responsible for logging and retrieving notifications
+6. `mail`: A microservice responsible for sending mails
+7. `judge`: A microservice responsible for running test cases on code outputs
+8. `compiler`: A microservice responsible for compiling user-submitted code
 
 ## Design Choices
 
-- Token-based authentication with JWT and OAuth2
-- Role-Based Access Control (RBAC) Authorization via embedding roles in JWT
-- Asynchronous communication between microservices via gRPC, and REST between the client and broker
+- Credentials and OAuth2 token-based authentication with JWT
+- Role-Based Access Control (RBAC) Authorization
+- Asynchronous communication between microservices via gRPC
+- Synchronous communication between client and broker via REST
 - Sandboxing of code execution in a docker container
-- Server-side caching with Memcache
-- Static rendering and serving of content
-- Centralized structured logging
+- Structured logging to output stream
 
 ## Contributing
 
