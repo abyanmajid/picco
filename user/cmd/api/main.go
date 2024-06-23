@@ -12,11 +12,13 @@ import (
 )
 
 const PORT = "50001"
+
+var SECRET_KEY = []byte("very secret")
+
 const DEFAULT_DB_URL = "host=postgres port=5432 user=postgres password=postgres dbname=users sslmode=disable timezone=UTC connect_timeout=5"
 
 type Config struct {
-	DB        *database.Queries
-	SecretKey []byte
+	DB *database.Queries
 }
 
 func main() {
@@ -38,8 +40,7 @@ func main() {
 	}
 
 	api := Config{
-		DB:        database.New(conn),
-		SecretKey: []byte("your_secret_key"),
+		DB: database.New(conn),
 	}
 
 	api.ListenAndServe()

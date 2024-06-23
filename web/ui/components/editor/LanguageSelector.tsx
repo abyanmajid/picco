@@ -6,7 +6,7 @@ type Props = {
     languageVersions: { [key: string]: string | null };
 };
 
-export default function LanguageSelector({ languageVersions }: Props) {
+export default function LanguageSelector() {
     const [selectedKeys, setSelectedKeys] = React.useState<Set<string>>(new Set(["python"]));
 
     const selectedValue = React.useMemo(
@@ -33,9 +33,10 @@ export default function LanguageSelector({ languageVersions }: Props) {
                 selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
             >
-                {Object.entries(languageVersions).map(([lang, version]) => (
-                    <DropdownItem key={lang}>{capitalize(lang)} ({version})</DropdownItem>
-                ))}
+                <DropdownItem key="python">Python</DropdownItem>
+                <DropdownItem key="java">Java</DropdownItem>
+                <DropdownItem key="cpp">C++</DropdownItem>
+                <DropdownItem key="javascript">JavaScript</DropdownItem>
             </DropdownMenu>
         </Dropdown>
     );

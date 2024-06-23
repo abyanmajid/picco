@@ -43,3 +43,7 @@ type UserPayload struct {
 	Token        string    `json:"token,omitempty"`
 	RefreshToken string    `json:"refresh_token,omitempty"`
 }
+
+type LoginResponse struct {
+	Token string `json:"token"`
+}

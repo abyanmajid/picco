@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/abyanmajid/codemore.io/user/internal/database"
@@ -12,18 +11,11 @@ import (
 )
 
 func (s *UserServer) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-
-	fmt.Println("Username REq: ", req.GetUsername())
-
 	requestPayload := CreateUserPayload{
 		Username: req.GetUsername(),
 		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
 	}
-
-	fmt.Println("Username: ", requestPayload.Username)
-	fmt.Println("Email: ", requestPayload.Email)
-	fmt.Println("Password: ", requestPayload.Password)
 
 	hashedPassword, err := utils.HashPassword(requestPayload.Password)
 	if err != nil {

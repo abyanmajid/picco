@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -18,22 +17,11 @@ func (api *Config) CreateUser(w http.ResponseWriter, requestPayload UserPayload)
 	defer client.Conn.Close()
 	defer client.Cancel()
 
-	// Debugging statements to verify the parsed payload
-	fmt.Println("Parsed Payload - Username:", requestPayload.Username)
-	fmt.Println("Parsed Payload - Email:", requestPayload.Email)
-	fmt.Println("Parsed Payload - Password:", requestPayload.Password)
-
-	// Make the gRPC call to create the user
 	_, err = client.Client.CreateUser(client.Ctx, &user.CreateUserRequest{
 		Username: requestPayload.Username,
 		Email:    requestPayload.Email,
 		Password: requestPayload.Password,
 	})
-
-	// Debugging statements to verify the payload before and after the gRPC call
-	fmt.Println("Before gRPC Call - Username:", requestPayload.Username)
-	fmt.Println("Before gRPC Call - Email:", requestPayload.Email)
-	fmt.Println("Before gRPC Call - Password:", requestPayload.Password)
 
 	if err != nil {
 		api.errorJSON(w, err)
@@ -48,6 +36,7 @@ func (api *Config) CreateUser(w http.ResponseWriter, requestPayload UserPayload)
 }
 
 func (api *Config) Login(w http.ResponseWriter, requestPayload UserPayload) {
+
 	client, err := api.getUserServiceClient()
 
 	if err != nil {
@@ -58,7 +47,7 @@ func (api *Config) Login(w http.ResponseWriter, requestPayload UserPayload) {
 	defer client.Conn.Close()
 	defer client.Cancel()
 
-	_, err = client.Client.Login(client.Ctx, &user.LoginRequest{
+	token, err := client.Client.Login(client.Ctx, &user.LoginRequest{
 		Email:    requestPayload.Email,
 		Password: requestPayload.Password,
 	})
@@ -71,6 +60,9 @@ func (api *Config) Login(w http.ResponseWriter, requestPayload UserPayload) {
 	var responsePayload JsonResponse
 	responsePayload.Error = false
 	responsePayload.Message = "Successfully logged in user #" + requestPayload.ID
+	responsePayload.Data = LoginResponse{
+		Token: token.Token,
+	}
 
 	api.writeJSON(w, http.StatusAccepted, responsePayload)
 }
