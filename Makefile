@@ -13,8 +13,8 @@ down:
 	docker-compose down
 	@echo "[codemore.io] Containers has successfully been stopped!"
 
-# up-build: stops docker-compose (if running), builds all projects and starts docker compose
-up-build: build-broker build-user
+# build: stops docker-compose (if running), builds all projects and starts docker compose
+build: build-broker build-user
 	@echo "[codemore.io] Stopping docker images (if running...)"
 	docker-compose down
 	@echo "[codemore.io] Building (when required) and starting docker images..."
@@ -44,6 +44,12 @@ users-migrate-down:
 	@echo "[codemore.io] Running goose down migration on users database..."
 	goose -dir ./user/sql/migrations postgres postgresql://postgres:postgres@localhost:5432/users down
 	@echo "[codemore.io] Successfully ran goose down migration!"
+
+# tv-user: vendor dependencies in user microservice
+tv-user:
+	@echo "[codemore.io] Vendoring dependencies for user microservice..."
+	cd user && go mod tidy && go mod vendor && cd ..
+	@echo "[codemore.io] Successfully vendored dependencies for user microservice..."
 
 # ui: start client
 ui:

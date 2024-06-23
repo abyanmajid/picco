@@ -3,41 +3,53 @@ updates:
   - package-ecosystem: npm
     directory: "/web/ui"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/broker"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/compiler"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/judge"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/mail"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/notification"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/user"
     schedule:
-      interval: weekly
-    target-branch: staging
+      interval: daily
+    target-branch: main
+
+  - package-ecosystem: gomod
+    directory: "/courses"
+    schedule:
+      interval: daily
+    target-branch: main
+
+  - package-ecosystem: gomod
+    directory: "/progression"
+    schedule:
+      interval: daily
+    target-branch: main

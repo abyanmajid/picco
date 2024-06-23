@@ -10,13 +10,12 @@ import LanguageSelector from "./LanguageSelector";
 import { capitalize } from "@/utils/helpers";
 import IOSwitcher from "./IOSwitcher";
 import Output from "./Output";
-import { executeCode } from "@/actions/api";
 
 type Props = {
     languageVersions: { [key: string]: string | null };
 }
 
-export default function CodeEditor({ languageVersions }: Props) {
+export default function CodeEditor() {
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     const [value, setValue] = useState("");
     const [language, setLanguage] = useState("python");
@@ -26,26 +25,26 @@ export default function CodeEditor({ languageVersions }: Props) {
     const [isError, setIsError] = useState(false);
 
     async function runCode() {
-        if (editorRef.current) {
-            const sourceCode = editorRef.current.getValue();
-            try {
-                setIsLoading(true);
-                const { run: result } = await executeCode(language, languageVersions[language], sourceCode);
-                setOutputShown(true);
-                setOutput(result.output.split("\n"));
-                result.stderr ? setIsError(true) : setIsError(false)
-            } catch (error) {
-                // toast({
-                //     title: "Unexpected error occurred.",
-                //     description: "Please try again later.",
-                //     status: "error",
-                //     duration: 6000,
-                // })
-            }
-            finally {
-                setIsLoading(false);
-            }
-        }
+        // if (editorRef.current) {
+        //     const sourceCode = editorRef.current.getValue();
+        //     try {
+        //         setIsLoading(true);
+        //         const { run: result } = await executeCode(language, languageVersions[language], sourceCode);
+        //         setOutputShown(true);
+        //         setOutput(result.output.split("\n"));
+        //         result.stderr ? setIsError(true) : setIsError(false)
+        //     } catch (error) {
+        //         // toast({
+        //         //     title: "Unexpected error occurred.",
+        //         //     description: "Please try again later.",
+        //         //     status: "error",
+        //         //     duration: 6000,
+        //         // })
+        //     }
+        //     finally {
+        //         setIsLoading(false);
+        //     }
+        // }
     }
 
     function onMount(editor: monaco.editor.IStandaloneCodeEditor) {
@@ -62,7 +61,7 @@ export default function CodeEditor({ languageVersions }: Props) {
         <Container>
             <Container className="grid grid-cols-2 mb-4">
                 <Container className="flex items-center mr">
-                    <LanguageSelector languageVersions={languageVersions} />
+                    <LanguageSelector />
                     <IOSwitcher outputShown={outputShown} setOutputShown={setOutputShown} />
                 </Container>
                 <Container className="justify-right text-right">

@@ -5,6 +5,10 @@ github.com/go-chi/chi/v5
 ## explicit; go 1.14
 github.com/go-chi/cors
 # golang.org/x/net v0.23.0
+# github.com/golang/protobuf v1.5.4
+## explicit; go 1.17
+github.com/golang/protobuf/ptypes/timestamp
+# golang.org/x/net v0.22.0
 ## explicit; go 1.18
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2

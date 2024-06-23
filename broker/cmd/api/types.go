@@ -1,31 +1,42 @@
 package main
 
-import "time"
+import (
+	"context"
+	"log/slog"
 
-type Config struct {
+	"github.com/abyanmajid/codemore.io/broker/user"
+	"google.golang.org/grpc"
+)
+
+type Service struct {
 	UserEndpoint string
+	Log          *slog.Logger
 }
 
-type jsonResponse struct {
+type JsonResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
 }
 
-type UserRequest struct {
-	Action string      `json:"action"`
-	Data   UserPayload `json:"data"`
+type GRPCClient struct {
+	Client user.UserServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
 }
 
-type UserPayload struct {
-	ID        string    `json:"id,omitempty"`
-	AuthType  string    `json:"auth_type,omitempty"`
-	Name      string    `json:"name,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	Password  string    `json:"password,omitempty"`
-	Level     int       `json:"level,omitempty"`
-	Badges    []string  `json:"ranks,omitempty"`
-	IsBanned  bool      `json:"is_banned,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+type CreateUserRequest struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type UpdateUserByIdRequest struct {
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Roles    []string `json:"roles"`
+	Xp       int32    `json:"xp"`
+	IsBanned bool     `json:"is_banned"`
 }

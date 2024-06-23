@@ -1,20 +1,42 @@
 package main
 
-import "github.com/abyanmajid/codemore.io/user/internal/database"
+import (
+	"log/slog"
 
-type Config struct {
-	DB *database.Queries
-}
+	"github.com/abyanmajid/codemore.io/user/internal/database"
+	user "github.com/abyanmajid/codemore.io/user/proto"
+)
 
-type jsonResponse struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+type Service struct {
+	user.UnimplementedUserServiceServer
+	DB  database.Queries
+	Log *slog.Logger
 }
 
 type CreateUserPayload struct {
-	AuthType string `json:"auth_type"`
-	Name     string `json:"name"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type GetUserByIdPayload struct {
+	Id string `json:"id"`
+}
+
+type GetUserByEmailPayload struct {
+	Email string `json:"email"`
+}
+
+type UpdateUserByIdPayload struct {
+	Id       string   `json:"id"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Roles    []string `json:"roles"`
+	Xp       int32    `json:"xp"`
+	IsBanned bool     `json:"is_banned"`
+}
+
+type DeleteUserByIdPayload struct {
+	Id string `json:"id"`
 }

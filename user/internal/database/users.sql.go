@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,19 +14,18 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-RETURNING id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at
+INSERT INTO users (id, username, email, password, roles, xp, is_banned, created_at, updated_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+RETURNING id, username, email, password, roles, xp, is_banned, created_at, updated_at
 `
 
 type CreateUserParams struct {
 	ID        uuid.UUID
-	AuthType  string
-	Name      string
+	Username  string
 	Email     string
-	Password  sql.NullString
-	Level     int32
-	Badges    []string
+	Password  string
+	Roles     []string
+	Xp        int32
 	IsBanned  bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -36,12 +34,11 @@ type CreateUserParams struct {
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.ID,
-		arg.AuthType,
-		arg.Name,
+		arg.Username,
 		arg.Email,
 		arg.Password,
-		arg.Level,
-		pq.Array(arg.Badges),
+		pq.Array(arg.Roles),
+		arg.Xp,
 		arg.IsBanned,
 		arg.CreatedAt,
 		arg.UpdatedAt,
@@ -49,12 +46,11 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.AuthType,
-		&i.Name,
+		&i.Username,
 		&i.Email,
 		&i.Password,
-		&i.Level,
-		pq.Array(&i.Badges),
+		pq.Array(&i.Roles),
+		&i.Xp,
 		&i.IsBanned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -62,17 +58,17 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const deleteUser = `-- name: DeleteUser :exec
+const deleteUserById = `-- name: DeleteUserById :exec
 DELETE FROM users WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, id)
+func (q *Queries) DeleteUserById(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUserById, id)
 	return err
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at FROM users
+SELECT id, username, email, password, roles, xp, is_banned, created_at, updated_at FROM users
 `
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
@@ -86,12 +82,11 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 		var i User
 		if err := rows.Scan(
 			&i.ID,
-			&i.AuthType,
-			&i.Name,
+			&i.Username,
 			&i.Email,
 			&i.Password,
-			&i.Level,
-			pq.Array(&i.Badges),
+			pq.Array(&i.Roles),
+			&i.Xp,
 			&i.IsBanned,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -110,7 +105,7 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at FROM users WHERE email = $1
+SELECT id, username, email, password, roles, xp, is_banned, created_at, updated_at FROM users WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -118,12 +113,11 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.AuthType,
-		&i.Name,
+		&i.Username,
 		&i.Email,
 		&i.Password,
-		&i.Level,
-		pq.Array(&i.Badges),
+		pq.Array(&i.Roles),
+		&i.Xp,
 		&i.IsBanned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -132,7 +126,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at FROM users WHERE id = $1
+SELECT id, username, email, password, roles, xp, is_banned, created_at, updated_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
@@ -140,12 +134,11 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.AuthType,
-		&i.Name,
+		&i.Username,
 		&i.Email,
 		&i.Password,
-		&i.Level,
-		pq.Array(&i.Badges),
+		pq.Array(&i.Roles),
+		&i.Xp,
 		&i.IsBanned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -153,44 +146,47 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 	return i, err
 }
 
-const updateUser = `-- name: UpdateUser :one
+const updateUserById = `-- name: UpdateUserById :one
 UPDATE users
-SET auth_type = $2, name = $3, email = $4, password = $5, level = $6, badges = $7, is_banned = $8, updated_at = NOW()
+SET username = COALESCE($2, username), 
+    email = COALESCE($3, email), 
+    password = COALESCE($4, password), 
+    roles = COALESCE($5, roles), 
+    xp = COALESCE($6, xp), 
+    is_banned = COALESCE($7, is_banned), 
+    updated_at = NOW()
 WHERE id = $1
-RETURNING id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at
+RETURNING id, username, email, password, roles, xp, is_banned, created_at, updated_at
 `
 
-type UpdateUserParams struct {
+type UpdateUserByIdParams struct {
 	ID       uuid.UUID
-	AuthType string
-	Name     string
+	Username string
 	Email    string
-	Password sql.NullString
-	Level    int32
-	Badges   []string
+	Password string
+	Roles    []string
+	Xp       int32
 	IsBanned bool
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
+func (q *Queries) UpdateUserById(ctx context.Context, arg UpdateUserByIdParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUserById,
 		arg.ID,
-		arg.AuthType,
-		arg.Name,
+		arg.Username,
 		arg.Email,
 		arg.Password,
-		arg.Level,
-		pq.Array(arg.Badges),
+		pq.Array(arg.Roles),
+		arg.Xp,
 		arg.IsBanned,
 	)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.AuthType,
-		&i.Name,
+		&i.Username,
 		&i.Email,
 		&i.Password,
-		&i.Level,
-		pq.Array(&i.Badges),
+		pq.Array(&i.Roles),
+		&i.Xp,
 		&i.IsBanned,
 		&i.CreatedAt,
 		&i.UpdatedAt,

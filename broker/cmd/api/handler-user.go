@@ -1,112 +1,242 @@
 package main
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/abyanmajid/codemore.io/broker/user"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"github.com/abyanmajid/codemore.io/broker/utils"
+	"github.com/go-chi/chi/v5"
 )
 
-func (api *Config) HandleHealth(w http.ResponseWriter, r *http.Request) {
-	payload := jsonResponse{
-		Error:   false,
-		Message: "Hello, World!",
-	}
+func (api *Service) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
+	api.Log.Info("Starting to handle CreateUser request")
 
-	_ = api.writeJSON(w, http.StatusOK, payload)
-}
+	var requestPayload CreateUserRequest
 
-func (api *Config) HandleUser(w http.ResponseWriter, r *http.Request) {
-	var requestPayload UserRequest
-
+	api.Log.Info("Reading JSON request", "handler", "HandleCreateUser")
 	err := api.readJSON(w, r, &requestPayload)
 
 	if err != nil {
+		api.Log.Error("Error reading JSON request", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
 
-	switch requestPayload.Action {
-	case "create-user":
-		api.CreateUserViaGRPC(w, requestPayload.Data)
-	default:
-		api.errorJSON(w, errors.New("unknown action"))
-	}
-
-}
-
-func (api *Config) createUser(w http.ResponseWriter, userData UserPayload) {
-	jsonData, _ := json.Marshal(userData)
-
-	requestEndpoint := api.UserEndpoint + "/users"
-
-	request, err := http.NewRequest("POST", requestEndpoint, bytes.NewBuffer(jsonData))
-
+	client, err := api.getUserServiceClient()
 	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
 
-	request.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
-	resp, err := client.Do(request)
+	defer client.Conn.Close()
+	defer client.Cancel()
 
-	if err != nil {
-		api.errorJSON(w, err)
-		return
-	}
-
-	defer resp.Body.Close()
-
-	fmt.Println("STATUS CODE:", resp.StatusCode)
-
-	if resp.StatusCode != http.StatusCreated {
-		api.errorJSON(w, errors.New("error calling user service"))
-		return
-	}
-
-	var payload jsonResponse
-	payload.Error = false
-	payload.Message = "Successfully created user #" + userData.ID
-
-	api.writeJSON(w, http.StatusOK, payload)
-}
-
-func (api *Config) CreateUserViaGRPC(w http.ResponseWriter, requestPayload UserPayload) {
-
-	conn, err := grpc.Dial("user:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	if err != nil {
-		api.errorJSON(w, err)
-		return
-	}
-
-	defer conn.Close()
-
-	c := user.NewUserServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	_, err = c.CreateUser(ctx, &user.CreateUserRequest{
-		AuthType: requestPayload.AuthType,
-		Name:     requestPayload.Name,
+	api.Log.Info("Creating user", "username", requestPayload.Username, "email", requestPayload.Email)
+	u, err := client.Client.CreateUser(client.Ctx, &user.CreateUserRequest{
+		Username: requestPayload.Username,
 		Email:    requestPayload.Email,
 		Password: requestPayload.Password,
 	})
+
 	if err != nil {
+		api.Log.Error("Error creating user", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
 
-	var payload jsonResponse
-	payload.Error = false
-	payload.Message = "Successfully created user #" + requestPayload.ID + " via GRPC"
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully created user #" + u.Id
+	responsePayload.Data = utils.DecodeProtoUser(u)
 
-	api.writeJSON(w, http.StatusOK, payload)
+	api.Log.Info("User created successfully", "user_id", u.Id)
+	api.writeJSON(w, http.StatusCreated, responsePayload)
+}
+
+func (api *Service) HandleGetAllUsers(w http.ResponseWriter, r *http.Request) {
+	api.Log.Info("Starting to handle GetAllUsers request")
+
+	client, err := api.getUserServiceClient()
+	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	users, err := client.Client.GetAllUsers(client.Ctx, &user.GetAllUsersRequest{})
+	if err != nil {
+		api.Log.Error("Error fetching all users", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully fetched all users"
+	responsePayload.Data = utils.DecodeMultipleProtoUsers(users.Users)
+
+	api.Log.Info("Successfully fetched all users", "user_count", len(users.Users))
+	api.writeJSON(w, http.StatusOK, responsePayload)
+}
+
+func (api *Service) HandleGetUserById(w http.ResponseWriter, r *http.Request) {
+	api.Log.Info("Starting to handle GetUserById request")
+
+	userID := chi.URLParam(r, "id")
+
+	api.Log.Info("Fetching user by ID", "user_id", userID)
+
+	client, err := api.getUserServiceClient()
+	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	u, err := client.Client.GetUserById(client.Ctx, &user.GetUserByIdRequest{
+		Id: userID,
+	})
+
+	if err != nil {
+		api.Log.Error("Error fetching user by ID", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully fetched user #" + u.Id
+	responsePayload.Data = utils.DecodeProtoUser(u)
+
+	api.Log.Info("Successfully fetched user", "user_id", u.Id)
+	api.writeJSON(w, http.StatusOK, responsePayload)
+}
+
+func (api *Service) HandleGetUserByEmail(w http.ResponseWriter, r *http.Request) {
+	api.Log.Info("Starting to handle GetUserByEmail request")
+
+	userEmail := chi.URLParam(r, "email")
+
+	api.Log.Info("Fetching user by email", "email", userEmail)
+
+	client, err := api.getUserServiceClient()
+	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	u, err := client.Client.GetUserByEmail(client.Ctx, &user.GetUserByEmailRequest{
+		Email: userEmail,
+	})
+
+	if err != nil {
+		api.Log.Error("Error fetching user by email", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully fetched user #" + u.Id
+	responsePayload.Data = utils.DecodeProtoUser(u)
+
+	api.Log.Info("Successfully fetched user", "user_id", u.Id)
+	api.writeJSON(w, http.StatusOK, responsePayload)
+}
+
+func (api *Service) HandleUpdateUserById(w http.ResponseWriter, r *http.Request) {
+	api.Log.Info("Starting to handle UpdateUserById request")
+
+	userID := chi.URLParam(r, "id")
+
+	var requestPayload UpdateUserByIdRequest
+	api.Log.Info("Reading JSON request", "handler", "HandleUpdateUserById")
+	err := api.readJSON(w, r, &requestPayload)
+
+	if err != nil {
+		api.Log.Error("Error reading JSON request", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	client, err := api.getUserServiceClient()
+	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	api.Log.Info("Updating user by ID", "user_id", userID)
+	u, err := client.Client.UpdateUserById(client.Ctx, &user.UpdateUserByIdRequest{
+		Id:       userID,
+		Username: requestPayload.Username,
+		Email:    requestPayload.Email,
+		Password: requestPayload.Password,
+		Roles:    requestPayload.Roles,
+		Xp:       requestPayload.Xp,
+		IsBanned: requestPayload.IsBanned,
+	})
+
+	if err != nil {
+		api.Log.Error("Error updating user", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully updated user #" + u.Id
+	responsePayload.Data = utils.DecodeProtoUser(u)
+
+	api.Log.Info("User updated successfully", "user_id", u.Id)
+	api.writeJSON(w, http.StatusOK, responsePayload)
+}
+
+func (api *Service) HandleDeleteUserById(w http.ResponseWriter, r *http.Request) {
+	api.Log.Info("Starting to handle DeleteUserById request")
+
+	userID := chi.URLParam(r, "id")
+
+	api.Log.Info("Deleting user by ID", "user_id", userID)
+
+	client, err := api.getUserServiceClient()
+	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	_, err = client.Client.DeleteUserById(client.Ctx, &user.DeleteUserByIdRequest{
+		Id: userID,
+	})
+
+	if err != nil {
+		api.Log.Error("Error deleting user", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully deleted user #" + userID
+
+	api.Log.Info("User deleted successfully", "user_id", userID)
+	api.writeJSON(w, http.StatusOK, responsePayload)
 }
