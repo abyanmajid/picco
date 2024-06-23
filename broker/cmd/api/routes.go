@@ -20,7 +20,6 @@ func (api *Config) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	router.Get("/health", api.HandleHealth)
 	router.Post("/user", api.HandleUser)
 
 	return router

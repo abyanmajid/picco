@@ -1,20 +1,17 @@
 package main
 
-import "github.com/abyanmajid/codemore.io/user/internal/database"
+import (
+	"github.com/abyanmajid/codemore.io/user/internal/database"
+	user "github.com/abyanmajid/codemore.io/user/proto"
+)
 
-type Config struct {
-	DB *database.Queries
-}
-
-type jsonResponse struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+type UserServer struct {
+	user.UnimplementedUserServiceServer
+	DB database.Queries
 }
 
 type CreateUserPayload struct {
-	AuthType string `json:"auth_type"`
-	Name     string `json:"name"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -22,4 +19,12 @@ type CreateUserPayload struct {
 type LoginPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type RefreshPayload struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+type LogoutPayload struct {
+	Token string `json:"token"`
 }

@@ -5,7 +5,6 @@
 package database
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,12 +12,11 @@ import (
 
 type User struct {
 	ID        uuid.UUID
-	AuthType  string
-	Name      string
+	Username  string
 	Email     string
-	Password  sql.NullString
-	Level     int32
-	Badges    []string
+	Password  string
+	Roles     []string
+	Xp        int32
 	IsBanned  bool
 	CreatedAt time.Time
 	UpdatedAt time.Time

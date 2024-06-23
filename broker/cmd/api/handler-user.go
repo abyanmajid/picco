@@ -1,112 +1,108 @@
 package main
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/abyanmajid/codemore.io/broker/user"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (api *Config) HandleHealth(w http.ResponseWriter, r *http.Request) {
-	payload := jsonResponse{
-		Error:   false,
-		Message: "Hello, World!",
-	}
-
-	_ = api.writeJSON(w, http.StatusOK, payload)
-}
-
-func (api *Config) HandleUser(w http.ResponseWriter, r *http.Request) {
-	var requestPayload UserRequest
-
-	err := api.readJSON(w, r, &requestPayload)
-
+func (api *Config) CreateUser(w http.ResponseWriter, requestPayload UserPayload) {
+	client, err := api.getUserServiceClient()
 	if err != nil {
 		api.errorJSON(w, err)
 		return
 	}
 
-	switch requestPayload.Action {
-	case "create-user":
-		api.CreateUserViaGRPC(w, requestPayload.Data)
-	default:
-		api.errorJSON(w, errors.New("unknown action"))
-	}
+	defer client.Conn.Close()
+	defer client.Cancel()
 
-}
+	// Debugging statements to verify the parsed payload
+	fmt.Println("Parsed Payload - Username:", requestPayload.Username)
+	fmt.Println("Parsed Payload - Email:", requestPayload.Email)
+	fmt.Println("Parsed Payload - Password:", requestPayload.Password)
 
-func (api *Config) createUser(w http.ResponseWriter, userData UserPayload) {
-	jsonData, _ := json.Marshal(userData)
-
-	requestEndpoint := api.UserEndpoint + "/users"
-
-	request, err := http.NewRequest("POST", requestEndpoint, bytes.NewBuffer(jsonData))
-
-	if err != nil {
-		api.errorJSON(w, err)
-		return
-	}
-
-	request.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
-	resp, err := client.Do(request)
-
-	if err != nil {
-		api.errorJSON(w, err)
-		return
-	}
-
-	defer resp.Body.Close()
-
-	fmt.Println("STATUS CODE:", resp.StatusCode)
-
-	if resp.StatusCode != http.StatusCreated {
-		api.errorJSON(w, errors.New("error calling user service"))
-		return
-	}
-
-	var payload jsonResponse
-	payload.Error = false
-	payload.Message = "Successfully created user #" + userData.ID
-
-	api.writeJSON(w, http.StatusOK, payload)
-}
-
-func (api *Config) CreateUserViaGRPC(w http.ResponseWriter, requestPayload UserPayload) {
-
-	conn, err := grpc.Dial("user:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	if err != nil {
-		api.errorJSON(w, err)
-		return
-	}
-
-	defer conn.Close()
-
-	c := user.NewUserServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	_, err = c.CreateUser(ctx, &user.CreateUserRequest{
-		AuthType: requestPayload.AuthType,
-		Name:     requestPayload.Name,
+	// Make the gRPC call to create the user
+	_, err = client.Client.CreateUser(client.Ctx, &user.CreateUserRequest{
+		Username: requestPayload.Username,
 		Email:    requestPayload.Email,
 		Password: requestPayload.Password,
 	})
+
+	// Debugging statements to verify the payload before and after the gRPC call
+	fmt.Println("Before gRPC Call - Username:", requestPayload.Username)
+	fmt.Println("Before gRPC Call - Email:", requestPayload.Email)
+	fmt.Println("Before gRPC Call - Password:", requestPayload.Password)
+
 	if err != nil {
 		api.errorJSON(w, err)
 		return
 	}
 
-	var payload jsonResponse
-	payload.Error = false
-	payload.Message = "Successfully created user #" + requestPayload.ID + " via GRPC"
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully created user #" + requestPayload.ID
 
-	api.writeJSON(w, http.StatusOK, payload)
+	api.writeJSON(w, http.StatusOK, responsePayload)
+}
+
+func (api *Config) Login(w http.ResponseWriter, requestPayload UserPayload) {
+	client, err := api.getUserServiceClient()
+
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	_, err = client.Client.Login(client.Ctx, &user.LoginRequest{
+		Email:    requestPayload.Email,
+		Password: requestPayload.Password,
+	})
+
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully logged in user #" + requestPayload.ID
+
+	api.writeJSON(w, http.StatusAccepted, responsePayload)
+}
+
+func (api *Config) Refresh(w http.ResponseWriter, requestPayload UserPayload) {
+	client, err := api.getUserServiceClient()
+
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	_, err = client.Client.Refresh(client.Ctx, &user.RefreshRequest{
+		RefreshToken: requestPayload.RefreshToken,
+	})
+
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	var responsePayload JsonResponse
+	responsePayload.Error = false
+	responsePayload.Message = "Successfully refreshed JWT token for user #" + requestPayload.ID
+}
+
+func (api *Config) Logout(w http.ResponseWriter, requestPayload UserPayload) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Expires: time.Now(),
+	})
 }

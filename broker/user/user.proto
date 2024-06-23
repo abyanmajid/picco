@@ -6,24 +6,43 @@ option go_package = "/user";
 
 service UserService {
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc Refresh(RefreshRequest) returns (RefreshResponse);
 }
 
 message CreateUserRequest {
-    string auth_type = 1;
-    string name = 2;
-    string email = 3;
-    string password = 4;
+    string username = 1;
+    string email = 2;
+    string password = 3;
 }
 
 message CreateUserResponse {
     string id = 1;
-    string auth_type = 2;
-    string name = 3;
-    string email = 4;
-    string password = 5;
-    int32 level = 6;
-    repeated string badges = 7;
-    bool is_banned = 8;
-    string created_at = 9;
-    string updated_at = 10;
+    string username = 2;
+    string email = 3;
+    string password = 4;
+    repeated string roles = 5;
+    int32 xp = 6;
+    bool is_banned = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+    int64 expiration_time = 2;
+}
+
+message RefreshRequest {
+    string refresh_token = 1;
+}
+
+message RefreshResponse {
+    string token = 1;
+    int64 expiration_time = 2;
 }

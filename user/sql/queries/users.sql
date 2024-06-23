@@ -1,6 +1,6 @@
 -- name: CreateUser :one
-INSERT INTO users (id, auth_type, name, email, password, level, badges, is_banned, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+INSERT INTO users (id, username, email, password, roles, xp, is_banned, created_at, updated_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING *;
 
 -- name: GetAllUsers :many
@@ -14,7 +14,7 @@ SELECT * FROM users WHERE email = $1;
 
 -- name: UpdateUser :one
 UPDATE users
-SET auth_type = $2, name = $3, email = $4, password = $5, level = $6, badges = $7, is_banned = $8, updated_at = NOW()
+SET username = $2, email = $3, password = $4, roles = $5, xp = $6, is_banned = $7, updated_at = NOW()
 WHERE id = $1
 RETURNING *;
 
