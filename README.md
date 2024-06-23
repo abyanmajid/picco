@@ -23,7 +23,7 @@ All client requests are sent to the `broker` service (which serves as an API gat
 ```mermaid
 graph TD
     Client <--> |REST| Firebase
-    Notification <--> |REST| Firebase
+    Notification <--> |gRPC| Firebase
     Client["<b>Client</b>"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
     Client <--> |REST| Auth0
     Broker <-->|gRPC| User["<b>User</b><br>(Docker)"]
