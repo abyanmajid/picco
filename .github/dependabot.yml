@@ -4,40 +4,52 @@ updates:
     directory: "/web/ui"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/broker"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/compiler"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/judge"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/mail"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/notification"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
 
   - package-ecosystem: gomod
     directory: "/user"
     schedule:
       interval: daily
-    target-branch: staging
+    target-branch: main
+
+  - package-ecosystem: gomod
+    directory: "/courses"
+    schedule:
+      interval: daily
+    target-branch: main
+
+  - package-ecosystem: gomod
+    directory: "/progression"
+    schedule:
+      interval: daily
+    target-branch: main
