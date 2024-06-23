@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Config struct {
+type Service struct {
 	UserEndpoint string
 	Log          *slog.Logger
 }
@@ -32,24 +32,11 @@ type CreateUserRequest struct {
 	Password string `json:"password"`
 }
 
-type GetUserByIdRequest struct {
-	Id string `json:"id"`
-}
-
-type GetUserByEmailRequest struct {
-	Email string `json:"email"`
-}
-
 type UpdateUserByIdRequest struct {
-	Id       string   `json:"id"`
 	Username string   `json:"username"`
 	Email    string   `json:"email"`
 	Password string   `json:"password"`
 	Roles    []string `json:"roles"`
 	Xp       int32    `json:"xp"`
 	IsBanned bool     `json:"is_banned"`
-}
-
-type DeleteUserByIdRequest struct {
-	Id string `json:"id"`
 }

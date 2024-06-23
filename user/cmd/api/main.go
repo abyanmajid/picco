@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/abyanmajid/codemore.io/user/internal/database"
 	"github.com/abyanmajid/codemore.io/user/utils"
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
@@ -12,14 +11,8 @@ import (
 )
 
 const PORT = "50001"
-
-var SECRET_KEY = []byte("very secret")
-
 const DEFAULT_DB_URL = "host=postgres port=5432 user=postgres password=postgres dbname=users sslmode=disable timezone=UTC connect_timeout=5"
-
-type Config struct {
-	DB *database.Queries
-}
+const APP_NAME = "User"
 
 func main() {
 	environment := os.Getenv("ENVIRONMENT")
@@ -39,9 +32,5 @@ func main() {
 		log.Panic("Can't connect to Postgres!")
 	}
 
-	api := Config{
-		DB: database.New(conn),
-	}
-
-	api.ListenAndServe()
+	ListenAndServe(conn)
 }

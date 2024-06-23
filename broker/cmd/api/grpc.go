@@ -9,14 +9,20 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (api *Config) getUserServiceClient() (*GRPCClient, error) {
+func (api *Service) getUserServiceClient() (*GRPCClient, error) {
+	api.Log.Info("Creating new gRPC client", "endpoint", api.UserEndpoint)
+
 	conn, err := grpc.NewClient(api.UserEndpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
+		api.Log.Error("Failed to create gRPC client connection", "error", err)
+
 		return nil, err
 	}
 
 	client := user.NewUserServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
+	api.Log.Info("gRPC client created successfully")
 
 	return &GRPCClient{
 		Client: client,

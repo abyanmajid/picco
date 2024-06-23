@@ -11,13 +11,10 @@ import (
 )
 
 const PORT = "80"
+const APP_NAME = "Broker"
 
-func main() {
+func SetMicroservices(api *Service) {
 	environment := os.Getenv("ENVIRONMENT")
-
-	api := Config{
-		Log: slog.New(utils.StructuredLogHandler(os.Stdout)),
-	}
 
 	switch environment {
 	case "development":
@@ -27,6 +24,14 @@ func main() {
 	default:
 		log.Fatal("The ENVIRONMENT environment variable is either not set or is not 'development' or 'production'")
 	}
+}
+
+func main() {
+	api := Service{
+		Log: slog.New(utils.StructuredLogHandler(os.Stdout, APP_NAME)),
+	}
+
+	SetMicroservices(&api)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", PORT),

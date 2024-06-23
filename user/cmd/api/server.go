@@ -1,15 +1,20 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"log/slog"
 	"net"
+	"os"
 
+	"github.com/abyanmajid/codemore.io/user/internal/database"
 	user "github.com/abyanmajid/codemore.io/user/proto"
+	utils "github.com/abyanmajid/codemore.io/user/utils"
 	"google.golang.org/grpc"
 )
 
-func (api *Config) ListenAndServe() {
+func ListenAndServe(conn *sql.DB) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", PORT))
 	if err != nil {
 		log.Fatalf("Failed to listen for gRPC: %v", err)
@@ -17,7 +22,10 @@ func (api *Config) ListenAndServe() {
 
 	s := grpc.NewServer()
 
-	user.RegisterUserServiceServer(s, &UserServer{DB: *api.DB})
+	user.RegisterUserServiceServer(s, &Service{
+		DB:  *database.New(conn),
+		Log: slog.New(utils.StructuredLogHandler(os.Stdout, APP_NAME)),
+	})
 
 	log.Printf("gRPC Server started on port %s", PORT)
 

@@ -1,13 +1,16 @@
 package main
 
 import (
+	"log/slog"
+
 	"github.com/abyanmajid/codemore.io/user/internal/database"
 	user "github.com/abyanmajid/codemore.io/user/proto"
 )
 
-type UserServer struct {
+type Service struct {
 	user.UnimplementedUserServiceServer
-	DB database.Queries
+	DB  database.Queries
+	Log *slog.Logger
 }
 
 type CreateUserPayload struct {
