@@ -58,12 +58,12 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const deleteUser = `-- name: DeleteUser :exec
+const deleteUserById = `-- name: DeleteUserById :exec
 DELETE FROM users WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, id)
+func (q *Queries) DeleteUserById(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUserById, id)
 	return err
 }
 
@@ -146,14 +146,20 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 	return i, err
 }
 
-const updateUser = `-- name: UpdateUser :one
+const updateUserById = `-- name: UpdateUserById :one
 UPDATE users
-SET username = $2, email = $3, password = $4, roles = $5, xp = $6, is_banned = $7, updated_at = NOW()
+SET username = COALESCE($2, username), 
+    email = COALESCE($3, email), 
+    password = COALESCE($4, password), 
+    roles = COALESCE($5, roles), 
+    xp = COALESCE($6, xp), 
+    is_banned = COALESCE($7, is_banned), 
+    updated_at = NOW()
 WHERE id = $1
 RETURNING id, username, email, password, roles, xp, is_banned, created_at, updated_at
 `
 
-type UpdateUserParams struct {
+type UpdateUserByIdParams struct {
 	ID       uuid.UUID
 	Username string
 	Email    string
@@ -163,8 +169,8 @@ type UpdateUserParams struct {
 	IsBanned bool
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
+func (q *Queries) UpdateUserById(ctx context.Context, arg UpdateUserByIdParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUserById,
 		arg.ID,
 		arg.Username,
 		arg.Email,

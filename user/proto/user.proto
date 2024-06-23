@@ -2,12 +2,28 @@ syntax = "proto3";
 
 package user;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "/user";
 
 service UserService {
-    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-    rpc Login(LoginRequest) returns (LoginResponse);
-    rpc Refresh(RefreshRequest) returns (RefreshResponse);
+    rpc CreateUser(CreateUserRequest) returns (User);
+    rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+    rpc GetUserById(GetUserByIdRequest) returns (User);
+    rpc GetUserByEmail(GetUserByEmailRequest) returns (User);
+    rpc UpdateUserById(UpdateUserByIdRequest) returns (User);
+    rpc DeleteUserById(DeleteUserByIdRequest) returns (DeleteUserByIdResponse);
+}
+
+message User {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    repeated string roles = 4;
+    int32 xp = 5;
+    bool is_banned = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
 }
 
 message CreateUserRequest {
@@ -16,7 +32,15 @@ message CreateUserRequest {
     string password = 3;
 }
 
-message CreateUserResponse {
+message GetUserByIdRequest {
+    string id = 1;
+}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message UpdateUserByIdRequest {
     string id = 1;
     string username = 2;
     string email = 3;
@@ -24,23 +48,18 @@ message CreateUserResponse {
     repeated string roles = 5;
     int32 xp = 6;
     bool is_banned = 7;
-    string created_at = 8;
-    string updated_at = 9;
 }
 
-message LoginRequest {
-    string email = 1;
-    string password = 2;
+message DeleteUserByIdRequest {
+    string id = 1;
 }
 
-message LoginResponse {
-    string token = 1;
+message DeleteUserByIdResponse {
+    string message = 1;
 }
 
-message RefreshRequest {
-    string refresh_token = 1;
-}
+message GetAllUsersRequest {}
 
-message RefreshResponse {
-    string token = 1;
+message GetAllUsersResponse {
+    repeated User users = 1;
 }

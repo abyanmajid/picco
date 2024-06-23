@@ -20,7 +20,13 @@ func (api *Config) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	router.Post("/user", api.HandleUser)
+	// Proxying routes for user service
+	router.Post("/user", api.HandleCreateUser)
+	router.Get("/user", api.HandleGetAllUsers)
+	router.Get("/user/id/{id}", api.HandleGetUserById)
+	router.Get("/user/email/{email}", api.HandleGetUserByEmail)
+	router.Patch("/user/id/{id}", api.HandleUpdateUserById)
+	router.Delete("/user/delete/{id}", api.HandleDeleteUserById)
 
 	return router
 }

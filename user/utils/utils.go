@@ -1,7 +1,11 @@
 package utils
 
 import (
+	user "github.com/abyanmajid/codemore.io/user/proto"
+
+	"github.com/abyanmajid/codemore.io/user/internal/database"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func HashPassword(password string) (string, error) {
@@ -13,6 +17,15 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func CheckPassword(plainPassword, hashedPassword string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
+func EncodeProtoUser(u database.User) *user.User {
+	return &user.User{
+		Id:        u.ID.String(),
+		Username:  u.Username,
+		Email:     u.Email,
+		Roles:     u.Roles,
+		Xp:        u.Xp,
+		IsBanned:  u.IsBanned,
+		CreatedAt: timestamppb.New(u.CreatedAt),
+		UpdatedAt: timestamppb.New(u.UpdatedAt),
+	}
 }

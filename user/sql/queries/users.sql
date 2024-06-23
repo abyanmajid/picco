@@ -1,22 +1,28 @@
 -- name: CreateUser :one
 INSERT INTO users (id, username, email, password, roles, xp, is_banned, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-RETURNING *;
+RETURNING id, username, email, password, roles, xp, is_banned, created_at, updated_at;
 
 -- name: GetAllUsers :many
-SELECT * FROM users;
+SELECT id, username, email, password, roles, xp, is_banned, created_at, updated_at FROM users;
 
 -- name: GetUserById :one
-SELECT * FROM users WHERE id = $1;
+SELECT id, username, email, password, roles, xp, is_banned, created_at, updated_at FROM users WHERE id = $1;
 
 -- name: GetUserByEmail :one
-SELECT * FROM users WHERE email = $1;
+SELECT id, username, email, password, roles, xp, is_banned, created_at, updated_at FROM users WHERE email = $1;
 
--- name: UpdateUser :one
+-- name: UpdateUserById :one
 UPDATE users
-SET username = $2, email = $3, password = $4, roles = $5, xp = $6, is_banned = $7, updated_at = NOW()
+SET username = COALESCE($2, username), 
+    email = COALESCE($3, email), 
+    password = COALESCE($4, password), 
+    roles = COALESCE($5, roles), 
+    xp = COALESCE($6, xp), 
+    is_banned = COALESCE($7, is_banned), 
+    updated_at = NOW()
 WHERE id = $1
-RETURNING *;
+RETURNING id, username, email, password, roles, xp, is_banned, created_at, updated_at;
 
--- name: DeleteUser :exec
+-- name: DeleteUserById :exec
 DELETE FROM users WHERE id = $1;

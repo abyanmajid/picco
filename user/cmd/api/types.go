@@ -16,15 +16,24 @@ type CreateUserPayload struct {
 	Password string `json:"password"`
 }
 
-type LoginPayload struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+type GetUserByIdPayload struct {
+	Id string `json:"id"`
 }
 
-type RefreshPayload struct {
-	RefreshToken string `json:"refresh_token"`
+type GetUserByEmailPayload struct {
+	Email string `json:"email"`
 }
 
-type LogoutPayload struct {
-	Token string `json:"token"`
+type UpdateUserByIdPayload struct {
+	Id       string   `json:"id"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Roles    []string `json:"roles"`
+	Xp       int32    `json:"xp"`
+	IsBanned bool     `json:"is_banned"`
+}
+
+type DeleteUserByIdPayload struct {
+	Id string `json:"id"`
 }
