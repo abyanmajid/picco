@@ -18,15 +18,15 @@ import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/ui/theme-switch";
 import {
-  TwitterIcon,
   GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
   SearchIcon,
-  Logo,
 } from "@/components/ui/icons";
+import { getSession } from "@auth0/nextjs-auth0";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const session = await getSession();
+  const isLoggedIn = session !== null ? true : false
+
   const searchInput = (
     <Input
       aria-label="Search"
@@ -84,9 +84,12 @@ export default function Navbar() {
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden sm:flex gap-2">
-          <Link href="/login">
-            <Button color="primary" variant="shadow">
-              Log In
+          <Link href={isLoggedIn ? siteConfig.links.logout : siteConfig.links.login}>
+            <Button
+              color={isLoggedIn ? "default" : "primary"}
+              variant={isLoggedIn ? "ghost" : "shadow"}
+            >
+              {isLoggedIn ? 'Logout' : 'Login'}
             </Button>
           </Link>
         </NavbarItem>
@@ -96,7 +99,6 @@ export default function Navbar() {
         <Link isExternal aria-label="Github" href={siteConfig.links.github}>
           <GithubIcon className="text-default-500" />
         </Link>
-        <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
 
@@ -105,20 +107,28 @@ export default function Navbar() {
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  index === siteConfig.navMenuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                href="#"
+                color="foreground"
+                href={item.href}
                 size="lg"
               >
                 {item.label}
               </Link>
             </NavbarMenuItem>
           ))}
+          {
+
+          }
+          <NavbarMenuItem>
+            <Link
+              color={isLoggedIn ? "danger" : "primary"}
+              href={isLoggedIn ? siteConfig.links.logout : siteConfig.links.login}
+              size="lg"
+            >
+              {isLoggedIn ? "Logout" : "Login"}
+            </Link>
+          </NavbarMenuItem>
         </div>
       </NavbarMenu>
-    </NextUINavbar>
+    </NextUINavbar >
   );
 };

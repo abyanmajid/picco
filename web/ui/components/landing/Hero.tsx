@@ -25,7 +25,7 @@ export default function Hero() {
                     radius: "full",
                     variant: "shadow",
                 })}
-                href="/login"
+                href="/courses"
             >
                 Start Learning
             </Link>

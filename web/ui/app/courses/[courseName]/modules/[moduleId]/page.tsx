@@ -2,19 +2,17 @@ import React from "react";
 import { notFound } from "next/navigation";
 
 import Container from "@/components/common/Container"
-import Title from "@/components/common/Title";
-import Subtitle from "@/components/common/Subtitle";
 import Module from "@/components/courses/Module";
 import { courses, CourseURLMapper } from "@/config/courses"
-import HotCourses from "@/components/landing/HotCourses";
 import { HeroHighlight } from "@/components/ui/hero-highlight";
+import { getSession } from "@auth0/nextjs-auth0";
 
 type Params = {
     params: {
         courseName: string
     }
 }
-export default function CourseSpecificPage({ params }: Params) {
+export default async function CourseSpecificPage({ params }: Params) {
     const { courseName } = params;
 
     if (!(courseName in CourseURLMapper)) {
