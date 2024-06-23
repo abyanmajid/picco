@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/abyanmajid/codemore.io/broker/user"
 	"google.golang.org/grpc"
@@ -9,6 +10,7 @@ import (
 
 type Config struct {
 	UserEndpoint string
+	Log          *slog.Logger
 }
 
 type JsonResponse struct {
@@ -25,9 +27,9 @@ type GRPCClient struct {
 }
 
 type CreateUserRequest struct {
-	Username string `json:"username,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type GetUserByIdRequest struct {
@@ -40,12 +42,12 @@ type GetUserByEmailRequest struct {
 
 type UpdateUserByIdRequest struct {
 	Id       string   `json:"id"`
-	Username string   `json:"username,omitempty"`
-	Email    string   `json:"email,omitempty"`
-	Password string   `json:"password,omitempty"`
-	Roles    []string `json:"roles,omitempty"`
-	Xp       int32    `json:"xp,omitempty"`
-	IsBanned bool     `json:"is_banned,omitempty"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Roles    []string `json:"roles"`
+	Xp       int32    `json:"xp"`
+	IsBanned bool     `json:"is_banned"`
 }
 
 type DeleteUserByIdRequest struct {

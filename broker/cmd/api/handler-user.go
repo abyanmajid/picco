@@ -8,17 +8,21 @@ import (
 )
 
 func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
+
 	var requestPayload CreateUserRequest
 
+	api.Log.Info("Reading JSON request", "handler", "HandleCreateUser")
 	err := api.readJSON(w, r, &requestPayload)
 
 	if err != nil {
+		api.Log.Error("Error reading JSON request", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
 
 	client, err := api.getUserServiceClient()
 	if err != nil {
+		api.Log.Error("Error getting user service client", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
@@ -26,6 +30,7 @@ func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	defer client.Conn.Close()
 	defer client.Cancel()
 
+	api.Log.Info("Creating user", "username", requestPayload.Username, "email", requestPayload.Email)
 	u, err := client.Client.CreateUser(client.Ctx, &user.CreateUserRequest{
 		Username: requestPayload.Username,
 		Email:    requestPayload.Email,
@@ -33,6 +38,7 @@ func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
+		api.Log.Error("Error creating user", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
@@ -42,6 +48,7 @@ func (api *Config) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	responsePayload.Message = "Successfully created user #" + u.Id
 	responsePayload.Data = utils.DecodeProtoUser(u)
 
+	api.Log.Info("User created successfully", "user_id", u.Id)
 	api.writeJSON(w, http.StatusCreated, responsePayload)
 }
 

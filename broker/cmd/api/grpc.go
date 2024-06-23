@@ -10,7 +10,7 @@ import (
 )
 
 func (api *Config) getUserServiceClient() (*GRPCClient, error) {
-	conn, err := grpc.Dial("user:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	conn, err := grpc.NewClient(api.UserEndpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
