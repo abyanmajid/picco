@@ -45,13 +45,24 @@ func (api *Service) HandleCreateTestCase(w http.ResponseWriter, r *http.Request)
 		input = requestPayload.Input
 	}
 
-	t, err := client.Client.CreateTestCase(client.Ctx, &judge.CreateTestCaseRequest{
-		TaskId:         taskID,
-		HasInput:       requestPayload.HasInput,
-		Input:          *input,
-		ExpectedOutput: requestPayload.ExpectedOutput,
-	})
+	// Ensure the input is only dereferenced when it is not nil
+	var createTestCaseReq *judge.CreateTestCaseRequest
+	if requestPayload.HasInput && input != nil {
+		createTestCaseReq = &judge.CreateTestCaseRequest{
+			TaskId:         taskID,
+			HasInput:       requestPayload.HasInput,
+			Input:          *input,
+			ExpectedOutput: requestPayload.ExpectedOutput,
+		}
+	} else {
+		createTestCaseReq = &judge.CreateTestCaseRequest{
+			TaskId:         taskID,
+			HasInput:       requestPayload.HasInput,
+			ExpectedOutput: requestPayload.ExpectedOutput,
+		}
+	}
 
+	t, err := client.Client.CreateTestCase(client.Ctx, createTestCaseReq)
 	if err != nil {
 		api.Log.Error("Error creating test case", "error", err)
 		api.errorJSON(w, err)

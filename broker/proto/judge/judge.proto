@@ -10,7 +10,6 @@ service JudgeService {
     rpc GetTestCase(GetTestCaseRequest) returns (GetTestCaseResponse);
     rpc UpdateTestCase(UpdateTestCaseRequest) returns (UpdateTestCaseResponse);
     rpc DeleteTestCase(DeleteTestCaseRequest) returns (DeleteTestCaseResponse);
-    rpc DeleteAllTestCases(DeleteAllTestCasesRequest) returns (DeleteAllTestCasesResponse);
     rpc RunTests(RunTestsRequest) returns (RunTestsResponse);
 }
 
@@ -84,13 +83,5 @@ message DeleteTestCaseRequest {
 }
 
 message DeleteTestCaseResponse {
-    bool success = 1;
-}
-
-message DeleteAllTestCasesRequest {
-    string task_id = 1;
-}
-
-message DeleteAllTestCasesResponse {
     bool success = 1;
 }
