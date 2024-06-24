@@ -71,7 +71,7 @@ type CompileRequest struct {
 type TestResult struct {
 	Id             string `json:"_id"`
 	Passed         bool   `json:"passed"`
-	Output         bool   `json:"output"`
+	Output         string `json:"output"`
 	ExpectedOutput string `json:"expected_output"`
 }
 

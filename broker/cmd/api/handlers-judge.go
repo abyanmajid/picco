@@ -48,10 +48,20 @@ func (api *Service) HandleRunTests(w http.ResponseWriter, r *http.Request) {
 
 	api.Log.Info("Successfully ran tests", "task_id", taskId)
 
+	var testResults []TestResult
+	for _, result := range results.Results {
+		testResults = append(testResults, TestResult{
+			Id:             result.XId,
+			Passed:         result.Passed,
+			Output:         result.Output,
+			ExpectedOutput: result.ExpectedOutput,
+		})
+	}
+
 	responsePayload := JsonResponse{
 		Error:   false,
 		Message: "Successfully ran tests",
-		Data:    results.Results,
+		Data:    testResults,
 	}
 
 	api.writeJSON(w, http.StatusOK, responsePayload)
