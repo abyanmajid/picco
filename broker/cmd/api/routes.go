@@ -28,5 +28,8 @@ func (api *Service) routes() http.Handler {
 	router.Put("/user/id/{id}", api.HandleUpdateUserById)
 	router.Delete("/user/id/{id}", api.HandleDeleteUserById)
 
+	// Proxying routes for compiler service
+	router.Post("/compiler/python", api.HandleCompilePython)
+
 	return router
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/abyanmajid/codemore.io/broker/user"
+	"github.com/abyanmajid/codemore.io/broker/proto/user"
 	"github.com/abyanmajid/codemore.io/broker/utils"
 	"github.com/go-chi/chi/v5"
 )

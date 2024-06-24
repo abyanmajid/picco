@@ -3,7 +3,7 @@ package utils
 import (
 	"time"
 
-	"github.com/abyanmajid/codemore.io/broker/user"
+	"github.com/abyanmajid/codemore.io/broker/proto/user"
 )
 
 type User struct {

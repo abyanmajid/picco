@@ -1,5 +1,6 @@
 BROKER_BINARY=broker
 USER_BINARY=user
+COMPILER_BINARY=compiler
 
 # up: starts all containers in the background without forcing build
 up:
@@ -14,7 +15,7 @@ down:
 	@echo "[codemore.io] Containers has successfully been stopped!"
 
 # build: stops docker-compose (if running), builds all projects and starts docker compose
-build: build-broker build-user
+build: build-broker build-user build-compiler
 	@echo "[codemore.io] Stopping docker images (if running...)"
 	docker-compose down
 	@echo "[codemore.io] Building (when required) and starting docker images..."
@@ -32,6 +33,12 @@ build-user:
 	@echo "[codemore.io] Building user..."
 	cd ./user && env GOOS=linux CGO_ENABLED=0 go build -o ${USER_BINARY} ./cmd/api
 	@echo "[codemore.io] User has successfully been built!"
+
+# build-compiler:
+build-compiler:
+	@echo "[codemore.io] Building compiler..."
+	cd ./compiler && env GOOS=linux CGO_ENABLED=0 go build -o ${COMPILER_BINARY} ./cmd/api
+	@echo "[codemore.io] Compiler has successfully been built!"
 
 # users-migrate-up: run goose migrate up for users database
 users-migrate-up:
