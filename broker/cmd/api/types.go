@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
+	"log/slog"
 
-	"github.com/abyanmajid/codemore.io/broker/user"
+	"github.com/abyanmajid/codemore.io/broker/proto/compiler"
+	"github.com/abyanmajid/codemore.io/broker/proto/user"
 	"google.golang.org/grpc"
 )
 
-type Config struct {
-	UserEndpoint string
+type Service struct {
+	UserEndpoint     string
+	CompilerEndpoint string
+	Log              *slog.Logger
 }
 
 type JsonResponse struct {
@@ -17,37 +21,44 @@ type JsonResponse struct {
 	Data    any    `json:"data,omitempty"`
 }
 
-type GRPCClient struct {
+type ServiceClient interface {
+	SourceCode(ctx context.Context, in *compiler.SourceCode, opts ...grpc.CallOption) (*compiler.Output, error)
+}
+
+type UserServiceClient struct {
 	Client user.UserServiceClient
 	Conn   *grpc.ClientConn
 	Ctx    context.Context
 	Cancel context.CancelFunc
 }
 
+type CompilerServiceClient struct {
+	Client compiler.CompilerServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
+}
+
 type CreateUserRequest struct {
-	Username string `json:"username,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
-}
-
-type GetUserByIdRequest struct {
-	Id string `json:"id"`
-}
-
-type GetUserByEmailRequest struct {
-	Email string `json:"email"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UpdateUserByIdRequest struct {
-	Id       string   `json:"id"`
-	Username string   `json:"username,omitempty"`
-	Email    string   `json:"email,omitempty"`
-	Password string   `json:"password,omitempty"`
-	Roles    []string `json:"roles,omitempty"`
-	Xp       int32    `json:"xp,omitempty"`
-	IsBanned bool     `json:"is_banned,omitempty"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Roles    []string `json:"roles"`
+	Xp       int32    `json:"xp"`
+	IsBanned bool     `json:"is_banned"`
 }
 
-type DeleteUserByIdRequest struct {
-	Id string `json:"id"`
+type CompileRequest struct {
+	Code string   `json:"code"`
+	Args []string `json:"args"`
+}
+
+type CompileResponse struct {
+	Output string `json:"output"`
 }

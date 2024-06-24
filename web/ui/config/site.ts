@@ -30,12 +30,10 @@ export const siteConfig = {
       label: "Top Learners",
       href: "/leaderboard",
     },
-    {
-      label: "Logout",
-      href: "/logout",
-    },
   ],
   links: {
     github: "https://github.com/abyanmajid/codemore.io",
+    login: "/api/auth/login",
+    logout: "/api/auth/logout",
   },
 };

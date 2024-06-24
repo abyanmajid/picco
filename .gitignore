@@ -24,8 +24,12 @@
 .env
 */.env
 
-# BROKER SERVICE
+# BINARIES
 /broker/broker
-
-# USER SERVICE
 /user/user
+/progression/progression
+/notification/notification
+/mail/mail
+/judge/judge
+/courses/courses
+/compiler/compiler

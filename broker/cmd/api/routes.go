@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func (api *Config) routes() http.Handler {
+func (api *Service) routes() http.Handler {
 	router := chi.NewRouter()
 
 	// specify who is allowed to connect
@@ -25,8 +25,11 @@ func (api *Config) routes() http.Handler {
 	router.Get("/user", api.HandleGetAllUsers)
 	router.Get("/user/id/{id}", api.HandleGetUserById)
 	router.Get("/user/email/{email}", api.HandleGetUserByEmail)
-	router.Patch("/user/id/{id}", api.HandleUpdateUserById)
-	router.Delete("/user/delete/{id}", api.HandleDeleteUserById)
+	router.Put("/user/id/{id}", api.HandleUpdateUserById)
+	router.Delete("/user/id/{id}", api.HandleDeleteUserById)
+
+	// Proxying routes for compiler service
+	router.Post("/compiler/python", api.HandleCompilePython)
 
 	return router
 }
