@@ -17,16 +17,19 @@ func main() {
 	var dbURL string
 	var username string
 	var password string
+	var compilerEndpoint string
 
 	switch environment {
 	case "development":
 		dbURL = DEFAULT_DEVELOPMENT_DB_URL
 		username = "mongo"
 		password = "mongo"
+		compilerEndpoint = "compiler:50001"
 	case "production":
 		dbURL = os.Getenv("PRODUCTION_DB_URL")
 		username = os.Getenv("PRODUCTION_DB_USERNAME")
 		password = os.Getenv("PRODUCTION_DB_PASSWORD")
+		compilerEndpoint = os.Getenv("PRODUCTION_COMPILER_ENDPOINT")
 	default:
 		log.Fatal("The ENVIRONMENT environment variable is either not set or is not 'development' or 'production'")
 	}
@@ -42,5 +45,5 @@ func main() {
 		}
 	}()
 
-	ListenAndServe(mongoClient)
+	ListenAndServe(mongoClient, compilerEndpoint)
 }

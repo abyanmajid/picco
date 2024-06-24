@@ -23,7 +23,7 @@ func SetMicroservices(api *Service) {
 		api.JudgeEndpoint = "judge:50001"
 	case "production":
 		api.UserEndpoint = os.Getenv("PRODUCTION_USER_ENDPOINT")
-		api.CompilerEndpoint = os.Getenv("PRODUCTION_USER_ENDPOINT")
+		api.CompilerEndpoint = os.Getenv("PRODUCTION_COMPILER_ENDPOINT")
 		api.JudgeEndpoint = os.Getenv("PRODUCTION_JUDGE_ENDPOINT")
 	default:
 		log.Fatal("The ENVIRONMENT environment variable is either not set or is not 'development' or 'production'")

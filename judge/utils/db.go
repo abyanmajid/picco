@@ -2,8 +2,10 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"log"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -30,4 +32,12 @@ func ConnectToDB(ctx context.Context, dbURL string, username string, password st
 	log.Println("Connected to MongoDB server successfully")
 
 	return client, nil
+}
+
+func ConvertToObjectIDString(id interface{}) (string, error) {
+	objectID, ok := id.(primitive.ObjectID)
+	if !ok {
+		return "", fmt.Errorf("failed to convert inserted ID to ObjectID")
+	}
+	return objectID.Hex(), nil
 }

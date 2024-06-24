@@ -1,22 +1,33 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 
-	judge "github.com/abyanmajid/codemore.io/judge/proto"
+	compiler "github.com/abyanmajid/codemore.io/judge/proto/compiler"
+	judge "github.com/abyanmajid/codemore.io/judge/proto/judge"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 type Service struct {
 	judge.UnimplementedJudgeServiceServer
-	Mongo *mongo.Client
-	Log   *slog.Logger
+	CompilerEndpoint string
+	Mongo            *mongo.Client
+	Log              *slog.Logger
+}
+
+type CompilerServiceClient struct {
+	Client compiler.CompilerServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
 }
 
 type TestCase struct {
-	TaskId         string  `json:"task_id"`
-	TestCaseId     string  `json:"test_case_id"`
-	HasInput       bool    `json:"has_input"`
-	Input          *string `json:"input,omitempty"`
-	ExpectedOutput string  `json:"expected_output"`
+	Id             primitive.ObjectID `bson:"_id,omitempty"`
+	TaskId         string             `bson:"task_id"`
+	Inputs         []string           `bson:"inputs"`
+	ExpectedOutput string             `bson:"expected_output"`
 }

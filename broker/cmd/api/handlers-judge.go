@@ -1,104 +1,169 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/abyanmajid/codemore.io/broker/proto/judge"
+	judge "github.com/abyanmajid/codemore.io/broker/proto/judge"
 	"github.com/go-chi/chi/v5"
 )
 
-func (api *Service) HandleCreateTestCase(w http.ResponseWriter, r *http.Request) {
-	api.Log.Info("HandleCreateTestCase called")
+func (api *Service) HandleRunTests(windows http.ResponseWriter, r *http.Request) {
 
+}
+
+func (api *Service) HandleCreateTestCase(w http.ResponseWriter, r *http.Request) {
 	var requestPayload TestCase
 	err := api.readJSON(w, r, &requestPayload)
+
 	if err != nil {
-		api.Log.Error("Error reading JSON", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
-	api.Log.Info("JSON payload read successfully", "payload", requestPayload)
 
 	client, err := api.getJudgeServiceClient()
 	if err != nil {
-		api.Log.Error("Error getting judge service client", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
-	api.Log.Info("Judge service client acquired successfully")
 
 	defer client.Conn.Close()
 	defer client.Cancel()
 
-	taskID := chi.URLParam(r, "task_id")
-	if taskID == "" {
-		err := fmt.Errorf("task_id is required")
-		api.Log.Error("task_id missing in URL", "error", err)
-		api.errorJSON(w, err)
-		return
-	}
-	api.Log.Info("task_id retrieved from URL", "task_id", taskID)
+	t, err := client.Client.CreateTestCase(client.Ctx, &judge.CreateTestCaseRequest{
+		TaskId:         chi.URLParam(r, "task_id"),
+		Inputs:         requestPayload.Inputs,
+		ExpectedOutput: requestPayload.ExpectedOutput,
+	})
 
-	var input *string
-	if requestPayload.HasInput {
-		input = requestPayload.Input
-	}
-
-	// Ensure the input is only dereferenced when it is not nil
-	var createTestCaseReq *judge.CreateTestCaseRequest
-	if requestPayload.HasInput && input != nil {
-		createTestCaseReq = &judge.CreateTestCaseRequest{
-			TaskId:         taskID,
-			HasInput:       requestPayload.HasInput,
-			Input:          *input,
-			ExpectedOutput: requestPayload.ExpectedOutput,
-		}
-	} else {
-		createTestCaseReq = &judge.CreateTestCaseRequest{
-			TaskId:         taskID,
-			HasInput:       requestPayload.HasInput,
-			ExpectedOutput: requestPayload.ExpectedOutput,
-		}
-	}
-
-	t, err := client.Client.CreateTestCase(client.Ctx, createTestCaseReq)
 	if err != nil {
-		api.Log.Error("Error creating test case", "error", err)
 		api.errorJSON(w, err)
 		return
 	}
-	api.Log.Info("Test case created successfully", "test_case_id", t.TestCase.TestCaseId)
 
-	var responsePayload JsonResponse
-	responsePayload.Error = false
-	responsePayload.Message = "Successfully created test case #" + t.TestCase.TestCaseId
-	responsePayload.Data = t.TestCase
+	responsePayload := JsonResponse{
+		Error:   false,
+		Message: "Successfully created test case #" + t.XId,
+		Data:    t,
+	}
 
 	api.writeJSON(w, http.StatusCreated, responsePayload)
-	api.Log.Info("Response sent successfully", "response_payload", responsePayload)
 }
 
 func (api *Service) HandleGetAllTestCases(w http.ResponseWriter, r *http.Request) {
+	client, err := api.getJudgeServiceClient()
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
 
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	res, err := client.Client.GetAllTestCases(client.Ctx, &judge.GetAllTestCasesRequest{
+		TaskId: chi.URLParam(r, "task_id"),
+	})
+	if err != nil {
+		return
+	}
+
+	responsePayload := JsonResponse{
+		Error:   false,
+		Message: "Successfully fetched test cases",
+		Data:    res.Testcases,
+	}
+
+	api.writeJSON(w, http.StatusOK, responsePayload)
 }
 
 func (api *Service) HandleGetTestCase(w http.ResponseWriter, r *http.Request) {
+	client, err := api.getJudgeServiceClient()
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
 
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	t, err := client.Client.GetTestCase(client.Ctx, &judge.GetTestCaseRequest{
+		XId: chi.URLParam(r, "test_case_id"),
+	})
+	if err != nil {
+		return
+	}
+
+	responsePayload := JsonResponse{
+		Error:   false,
+		Message: "Successfully fetched test cases",
+		Data:    t,
+	}
+
+	api.writeJSON(w, http.StatusOK, responsePayload)
 }
 
 func (api *Service) HandleUpdateTestCase(w http.ResponseWriter, r *http.Request) {
+	var requestPayload TestCase
+	err := api.readJSON(w, r, &requestPayload)
 
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	client, err := api.getJudgeServiceClient()
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	t, err := client.Client.UpdateTestCase(client.Ctx, &judge.UpdateTestCaseRequest{
+		XId:            chi.URLParam(r, "test_case_id"),
+		Inputs:         requestPayload.Inputs,
+		ExpectedOutput: requestPayload.ExpectedOutput,
+	})
+
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
+
+	responsePayload := JsonResponse{
+		Error:   false,
+		Message: "Successfully updated test case #" + t.XId,
+		Data:    t,
+	}
+
+	api.writeJSON(w, http.StatusOK, responsePayload)
 }
 
 func (api *Service) HandleDeleteTestCase(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "test_case_id")
 
-}
+	client, err := api.getJudgeServiceClient()
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
 
-func (api *Service) HandleDeleteAllTestCases(w http.ResponseWriter, r *http.Request) {
+	defer client.Conn.Close()
+	defer client.Cancel()
 
-}
+	_, err = client.Client.DeleteTestCase(client.Ctx, &judge.DeleteTestCaseRequest{
+		XId: id,
+	})
 
-func (api *Service) HandleRunTests(w http.ResponseWriter, r *http.Request) {
+	if err != nil {
+		api.errorJSON(w, err)
+		return
+	}
 
+	responsePayload := JsonResponse{
+		Error:   false,
+		Message: "Successfully deleted test case #" + id,
+	}
+
+	api.writeJSON(w, http.StatusOK, responsePayload)
 }

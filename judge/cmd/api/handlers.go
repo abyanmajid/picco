@@ -4,22 +4,46 @@ import (
 	"context"
 	"fmt"
 
-	judge "github.com/abyanmajid/codemore.io/judge/proto"
+	judge "github.com/abyanmajid/codemore.io/judge/proto/judge"
+	"github.com/abyanmajid/codemore.io/judge/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+func (api *Service) CreateTestCase(ctx context.Context, req *judge.CreateTestCaseRequest) (*judge.TestCase, error) {
+	testCase := TestCase{
+		TaskId:         req.GetTaskId(),
+		Inputs:         req.GetInputs(),
+		ExpectedOutput: req.GetExpectedOutput(),
+	}
+
+	collection := api.Mongo.Database("testcases").Collection("testcases")
+	doc, err := collection.InsertOne(ctx, testCase)
+	if err != nil {
+		return nil, err
+	}
+
+	insertedID, err := utils.ConvertToObjectIDString(doc.InsertedID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert inserted ID to ObjectID")
+	}
+
+	return &judge.TestCase{
+		XId:            insertedID,
+		TaskId:         testCase.TaskId,
+		Inputs:         testCase.Inputs,
+		ExpectedOutput: testCase.ExpectedOutput,
+	}, nil
+}
 
 func (api *Service) GetAllTestCases(ctx context.Context, req *judge.GetAllTestCasesRequest) (*judge.GetAllTestCasesResponse, error) {
 	collection := api.Mongo.Database("testcases").Collection("testcases")
 
-	// Create a filter to match the task_id
 	filter := bson.M{"task_id": req.GetTaskId()}
 
-	// Find all documents that match the filter
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find test cases: %v", err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
@@ -27,139 +51,105 @@ func (api *Service) GetAllTestCases(ctx context.Context, req *judge.GetAllTestCa
 	for cursor.Next(ctx) {
 		var testCase TestCase
 		if err := cursor.Decode(&testCase); err != nil {
-			return nil, fmt.Errorf("failed to decode test case: %v", err)
+			return nil, err
 		}
 		testCases = append(testCases, testCase)
 	}
 
 	if err := cursor.Err(); err != nil {
-		return nil, fmt.Errorf("cursor error: %v", err)
+		return nil, err
 	}
 
-	// Construct the response
-	var response judge.GetAllTestCasesResponse
+	res := &judge.GetAllTestCasesResponse{}
 	for _, tc := range testCases {
 		testCase := &judge.TestCase{
-			TestCaseId:     tc.TestCaseId,
-			HasInput:       tc.HasInput,
+			XId:            tc.Id.Hex(),
+			TaskId:         tc.TaskId,
+			Inputs:         tc.Inputs,
 			ExpectedOutput: tc.ExpectedOutput,
 		}
-		if tc.HasInput && tc.Input != nil {
-			testCase.Input = *tc.Input
-		}
-		response.TestCases = append(response.TestCases, testCase)
+		res.Testcases = append(res.Testcases, testCase)
 	}
 
-	return &response, nil
+	return res, nil
 }
 
-func (api *Service) GetTestCase(ctx context.Context, req *judge.GetTestCaseRequest) (*judge.GetTestCaseResponse, error) {
+func (api *Service) GetTestCase(ctx context.Context, req *judge.GetTestCaseRequest) (*judge.TestCase, error) {
 	collection := api.Mongo.Database("testcases").Collection("testcases")
 
-	// Create a filter to match the test_case_id
-	filter := bson.M{"test_case_id": req.GetTestCaseId()}
-
-	// Find the document that matches the filter
-	var testCase TestCase
-	err := collection.FindOne(ctx, filter).Decode(&testCase)
+	objectID, err := primitive.ObjectIDFromHex(req.GetXId())
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, fmt.Errorf("test case not found: %v", err)
-		}
-		return nil, fmt.Errorf("failed to find test case: %v", err)
+		return nil, err
 	}
 
-	// Construct the response
-	response := &judge.GetTestCaseResponse{
-		TestCase: &judge.TestCase{
-			TestCaseId:     testCase.TestCaseId,
-			HasInput:       testCase.HasInput,
-			ExpectedOutput: testCase.ExpectedOutput,
-		},
-	}
-	if testCase.HasInput && testCase.Input != nil {
-		response.TestCase.Input = *testCase.Input
+	filter := bson.M{"_id": objectID}
+	doc := collection.FindOne(ctx, filter)
+
+	var testCase TestCase
+	if err := doc.Decode(&testCase); err != nil {
+		return nil, err
 	}
 
-	return response, nil
+	return &judge.TestCase{
+		XId:            req.GetXId(),
+		TaskId:         testCase.TaskId,
+		Inputs:         testCase.Inputs,
+		ExpectedOutput: testCase.ExpectedOutput,
+	}, nil
 }
 
-func (api *Service) UpdateTestCase(ctx context.Context, req *judge.UpdateTestCaseRequest) (*judge.UpdateTestCaseResponse, error) {
+func (api *Service) UpdateTestCase(ctx context.Context, req *judge.UpdateTestCaseRequest) (*judge.TestCase, error) {
 	collection := api.Mongo.Database("testcases").Collection("testcases")
 
-	// Create a filter to match the test_case_id
-	filter := bson.M{"test_case_id": req.GetTestCaseId()}
+	// Convert the string ID to an ObjectID
+	objectID, err := primitive.ObjectIDFromHex(req.GetXId())
+	if err != nil {
+		return nil, fmt.Errorf("invalid ID format: %v", err)
+	}
 
-	// Create an update document
+	// Create the update fields
 	update := bson.M{
 		"$set": bson.M{
-			"task_id":         req.GetTaskId(),
-			"has_input":       req.GetHasInput(),
+			"inputs":          req.GetInputs(),
 			"expected_output": req.GetExpectedOutput(),
 		},
 	}
 
-	if req.GetHasInput() {
-		update["$set"].(bson.M)["input"] = req.GetInput()
-	} else {
-		update["$unset"] = bson.M{"input": ""}
+	// Create the filter with the ObjectID
+	filter := bson.M{"_id": objectID}
+
+	// Perform the update
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update test case: %v", err)
 	}
 
-	// Execute the update operation
-	result := collection.FindOneAndUpdate(ctx, filter, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
-	if result.Err() != nil {
-		if result.Err() == mongo.ErrNoDocuments {
-			return nil, fmt.Errorf("test case not found: %v", result.Err())
-		}
-		return nil, fmt.Errorf("failed to update test case: %v", result.Err())
+	// Check if the update was successful
+	if result.MatchedCount == 0 {
+		return nil, fmt.Errorf("test case not found")
 	}
 
-	// Decode the updated document
-	var updatedTestCase TestCase
-	if err := result.Decode(&updatedTestCase); err != nil {
-		return nil, fmt.Errorf("failed to decode updated test case: %v", err)
-	}
-
-	// Construct the response
-	response := &judge.UpdateTestCaseResponse{
-		TestCase: &judge.TestCase{
-			TestCaseId:     updatedTestCase.TestCaseId,
-			HasInput:       updatedTestCase.HasInput,
-			ExpectedOutput: updatedTestCase.ExpectedOutput,
-		},
-	}
-	if updatedTestCase.HasInput && updatedTestCase.Input != nil {
-		response.TestCase.Input = *updatedTestCase.Input
-	}
-
-	return response, nil
+	// Return the updated test case
+	return &judge.TestCase{
+		XId:            req.GetXId(),
+		Inputs:         req.GetInputs(),
+		ExpectedOutput: req.GetExpectedOutput(),
+	}, nil
 }
 
 func (api *Service) DeleteTestCase(ctx context.Context, req *judge.DeleteTestCaseRequest) (*judge.DeleteTestCaseResponse, error) {
 	collection := api.Mongo.Database("testcases").Collection("testcases")
-
-	// Create a filter to match the test_case_id
-	filter := bson.M{"test_case_id": req.GetTestCaseId()}
-
-	// Execute the delete operation
-	result, err := collection.DeleteOne(ctx, filter)
+	objectID, err := primitive.ObjectIDFromHex(req.GetXId())
 	if err != nil {
-		return nil, fmt.Errorf("failed to delete test case: %v", err)
+		return nil, fmt.Errorf("invalid ID format: %v", err)
 	}
 
-	// Check if a document was actually deleted
-	if result.DeletedCount == 0 {
-		return nil, fmt.Errorf("test case not found")
+	filter := bson.M{"_id": objectID}
+
+	_, err = collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return nil, err
 	}
 
-	// Construct the response
-	response := &judge.DeleteTestCaseResponse{
-		Success: true,
-	}
-
-	return response, nil
+	return &judge.DeleteTestCaseResponse{}, nil
 }
-
-// func (api *Service) RunTests(ctx context.Context, req *judge.RunTestsRequest) (*judge.RunTestsResponse, error) {
-
-// }

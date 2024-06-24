@@ -22,10 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JudgeServiceClient interface {
-	CreateTestCase(ctx context.Context, in *CreateTestCaseRequest, opts ...grpc.CallOption) (*CreateTestCaseResponse, error)
+	CreateTestCase(ctx context.Context, in *CreateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error)
 	GetAllTestCases(ctx context.Context, in *GetAllTestCasesRequest, opts ...grpc.CallOption) (*GetAllTestCasesResponse, error)
-	GetTestCase(ctx context.Context, in *GetTestCaseRequest, opts ...grpc.CallOption) (*GetTestCaseResponse, error)
-	UpdateTestCase(ctx context.Context, in *UpdateTestCaseRequest, opts ...grpc.CallOption) (*UpdateTestCaseResponse, error)
+	GetTestCase(ctx context.Context, in *GetTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error)
+	UpdateTestCase(ctx context.Context, in *UpdateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error)
 	DeleteTestCase(ctx context.Context, in *DeleteTestCaseRequest, opts ...grpc.CallOption) (*DeleteTestCaseResponse, error)
 	RunTests(ctx context.Context, in *RunTestsRequest, opts ...grpc.CallOption) (*RunTestsResponse, error)
 }
@@ -38,8 +38,8 @@ func NewJudgeServiceClient(cc grpc.ClientConnInterface) JudgeServiceClient {
 	return &judgeServiceClient{cc}
 }
 
-func (c *judgeServiceClient) CreateTestCase(ctx context.Context, in *CreateTestCaseRequest, opts ...grpc.CallOption) (*CreateTestCaseResponse, error) {
-	out := new(CreateTestCaseResponse)
+func (c *judgeServiceClient) CreateTestCase(ctx context.Context, in *CreateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error) {
+	out := new(TestCase)
 	err := c.cc.Invoke(ctx, "/judge.JudgeService/CreateTestCase", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -56,8 +56,8 @@ func (c *judgeServiceClient) GetAllTestCases(ctx context.Context, in *GetAllTest
 	return out, nil
 }
 
-func (c *judgeServiceClient) GetTestCase(ctx context.Context, in *GetTestCaseRequest, opts ...grpc.CallOption) (*GetTestCaseResponse, error) {
-	out := new(GetTestCaseResponse)
+func (c *judgeServiceClient) GetTestCase(ctx context.Context, in *GetTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error) {
+	out := new(TestCase)
 	err := c.cc.Invoke(ctx, "/judge.JudgeService/GetTestCase", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,8 +65,8 @@ func (c *judgeServiceClient) GetTestCase(ctx context.Context, in *GetTestCaseReq
 	return out, nil
 }
 
-func (c *judgeServiceClient) UpdateTestCase(ctx context.Context, in *UpdateTestCaseRequest, opts ...grpc.CallOption) (*UpdateTestCaseResponse, error) {
-	out := new(UpdateTestCaseResponse)
+func (c *judgeServiceClient) UpdateTestCase(ctx context.Context, in *UpdateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error) {
+	out := new(TestCase)
 	err := c.cc.Invoke(ctx, "/judge.JudgeService/UpdateTestCase", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -96,10 +96,10 @@ func (c *judgeServiceClient) RunTests(ctx context.Context, in *RunTestsRequest, 
 // All implementations must embed UnimplementedJudgeServiceServer
 // for forward compatibility
 type JudgeServiceServer interface {
-	CreateTestCase(context.Context, *CreateTestCaseRequest) (*CreateTestCaseResponse, error)
+	CreateTestCase(context.Context, *CreateTestCaseRequest) (*TestCase, error)
 	GetAllTestCases(context.Context, *GetAllTestCasesRequest) (*GetAllTestCasesResponse, error)
-	GetTestCase(context.Context, *GetTestCaseRequest) (*GetTestCaseResponse, error)
-	UpdateTestCase(context.Context, *UpdateTestCaseRequest) (*UpdateTestCaseResponse, error)
+	GetTestCase(context.Context, *GetTestCaseRequest) (*TestCase, error)
+	UpdateTestCase(context.Context, *UpdateTestCaseRequest) (*TestCase, error)
 	DeleteTestCase(context.Context, *DeleteTestCaseRequest) (*DeleteTestCaseResponse, error)
 	RunTests(context.Context, *RunTestsRequest) (*RunTestsResponse, error)
 	mustEmbedUnimplementedJudgeServiceServer()
@@ -109,16 +109,16 @@ type JudgeServiceServer interface {
 type UnimplementedJudgeServiceServer struct {
 }
 
-func (UnimplementedJudgeServiceServer) CreateTestCase(context.Context, *CreateTestCaseRequest) (*CreateTestCaseResponse, error) {
+func (UnimplementedJudgeServiceServer) CreateTestCase(context.Context, *CreateTestCaseRequest) (*TestCase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTestCase not implemented")
 }
 func (UnimplementedJudgeServiceServer) GetAllTestCases(context.Context, *GetAllTestCasesRequest) (*GetAllTestCasesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllTestCases not implemented")
 }
-func (UnimplementedJudgeServiceServer) GetTestCase(context.Context, *GetTestCaseRequest) (*GetTestCaseResponse, error) {
+func (UnimplementedJudgeServiceServer) GetTestCase(context.Context, *GetTestCaseRequest) (*TestCase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTestCase not implemented")
 }
-func (UnimplementedJudgeServiceServer) UpdateTestCase(context.Context, *UpdateTestCaseRequest) (*UpdateTestCaseResponse, error) {
+func (UnimplementedJudgeServiceServer) UpdateTestCase(context.Context, *UpdateTestCaseRequest) (*TestCase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTestCase not implemented")
 }
 func (UnimplementedJudgeServiceServer) DeleteTestCase(context.Context, *DeleteTestCaseRequest) (*DeleteTestCaseResponse, error) {

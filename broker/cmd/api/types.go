@@ -68,25 +68,19 @@ type CompileRequest struct {
 	Args []string `json:"args"`
 }
 
-type JudgeRequest struct {
-	TaskId string `json:"task_id"`
-	Code   string `json:"code"`
-}
-
-type JudgeResponse struct {
-	Results []TestResult `json:"results"`
-}
-
 type TestResult struct {
-	TestCaseId     string `json:"test_case_id"`
+	Id             string `json:"_id"`
 	Passed         bool   `json:"passed"`
 	Output         bool   `json:"output"`
 	ExpectedOutput string `json:"expected_output"`
 }
 
 type TestCase struct {
-	TestCaseId     string  `json:"test_case_id"`
-	HasInput       bool    `json:"has_input"`
-	Input          *string `json:"input,omitempty"`
-	ExpectedOutput string  `json:"expected_output"`
+	Inputs         []string `json:"inputs"`
+	ExpectedOutput string   `json:"expected_output"`
+}
+
+type RunTestsRequest struct {
+	Code     string `json:"code"`
+	Language string `json:"language"`
 }

@@ -50,7 +50,6 @@ func (api *Service) HandleCompilePython(w http.ResponseWriter, r *http.Request) 
 	api.compile(w, r, "python")
 }
 
-// Specific handler for compiling Java code
 func (api *Service) HandleCompileJava(w http.ResponseWriter, r *http.Request) {
 	api.compile(w, r, "java")
 }
