@@ -30,6 +30,12 @@ func (api *Service) routes() http.Handler {
 
 	// Proxying routes for compiler service
 	router.Post("/compiler/python", api.HandleCompilePython)
+	router.Post("/compiler/java", api.HandleCompileJava)
+	router.Post("/compiler/cpp", api.HandleCompileCpp)
+	router.Post("/compiler/javascript", api.HandleCompileJavaScript)
+
+	// Proxying routes for judge service
+	router.Post("/judge/{taskId}", api.HandleJudge)
 
 	return router
 }

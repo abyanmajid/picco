@@ -59,6 +59,18 @@ type CompileRequest struct {
 	Args []string `json:"args"`
 }
 
-type CompileResponse struct {
-	Output string `json:"output"`
+type JudgeRequest struct {
+	TaskId string `json:"task_id"`
+	Code   string `json:"code"`
+}
+
+type JudgeResponse struct {
+	Results []TestResult `json:"results"`
+}
+
+type TestResult struct {
+	TestCaseId     string `json:"test_case_id"`
+	Passed         bool   `json:"passed"`
+	Output         bool   `json:"output"`
+	ExpectedOutput string `json:"expected_output"`
 }
