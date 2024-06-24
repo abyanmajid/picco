@@ -22,9 +22,8 @@ All client requests are sent to the `broker` service (which serves as an API gat
 
 ```mermaid
 graph TD
-    Client
-    Client["<b>Client</b>"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
     Client <--> |REST| Auth0
+    Client["<b>Client</b>"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
     Broker <-->|gRPC| User["<b>User</b><br>(Docker)"]
     Broker <-->|gRPC| Courses["<b>Courses</b><br>(Docker)"]
     Broker <-->|gRPC| Progression["<b>Progression</b><br>(Docker)"]
