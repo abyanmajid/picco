@@ -35,7 +35,13 @@ func (api *Service) routes() http.Handler {
 	router.Post("/compiler/javascript", api.HandleCompileJavaScript)
 
 	// Proxying routes for judge service
-	router.Post("/judge/{taskId}", api.HandleJudge)
+	router.Post("/judge/testcases/{task_id}", api.HandleCreateTestCase)
+	router.Get("/judge/testcases/{task_id}", api.HandleGetAllTestCases)
+	router.Get("/judge/testcases/{task_id}/{test_case_id}", api.HandleGetTestCase)
+	router.Put("/judge/testcases/{task_id}/{test_case_id}", api.HandleUpdateTestCase)
+	router.Delete("/judge/testcases/{task_id}/{test_case_id}", api.HandleDeleteTestCase)
+	router.Delete("/judge/testcases/{task_id}", api.HandleDeleteAllTestCases)
+	router.Post("/judge/tests/{task_id}", api.HandleRunTests)
 
 	return router
 }

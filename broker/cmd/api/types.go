@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/abyanmajid/codemore.io/broker/proto/compiler"
+	"github.com/abyanmajid/codemore.io/broker/proto/judge"
 	"github.com/abyanmajid/codemore.io/broker/proto/user"
 	"google.golang.org/grpc"
 )
@@ -12,6 +13,7 @@ import (
 type Service struct {
 	UserEndpoint     string
 	CompilerEndpoint string
+	JudgeEndpoint    string
 	Log              *slog.Logger
 }
 
@@ -34,6 +36,13 @@ type UserServiceClient struct {
 
 type CompilerServiceClient struct {
 	Client compiler.CompilerServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
+}
+
+type JudgeServiceClient struct {
+	Client judge.JudgeServiceClient
 	Conn   *grpc.ClientConn
 	Ctx    context.Context
 	Cancel context.CancelFunc
@@ -73,4 +82,11 @@ type TestResult struct {
 	Passed         bool   `json:"passed"`
 	Output         bool   `json:"output"`
 	ExpectedOutput string `json:"expected_output"`
+}
+
+type TestCase struct {
+	TestCaseId     string  `json:"test_case_id"`
+	HasInput       bool    `json:"has_input"`
+	Input          *string `json:"input,omitempty"`
+	ExpectedOutput string  `json:"expected_output"`
 }

@@ -11,7 +11,7 @@ import (
 )
 
 const PORT = "50001"
-const DEFAULT_DB_URL = "host=postgres port=5432 user=postgres password=postgres dbname=users sslmode=disable timezone=UTC connect_timeout=5"
+const DEFAULT_DEVELOPMENT_DB_URL = "host=postgres port=5432 user=postgres password=postgres dbname=users sslmode=disable timezone=UTC connect_timeout=5"
 const APP_NAME = "User"
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 
 	switch environment {
 	case "development":
-		dbURL = DEFAULT_DB_URL
+		dbURL = DEFAULT_DEVELOPMENT_DB_URL
 	case "production":
 		dbURL = os.Getenv("PRODUCTION_DB_URL")
 	default:
