@@ -22,20 +22,22 @@ All client requests are sent to the `broker` service (which serves as an API gat
 
 ```mermaid
 graph TD
-    Client <--> |REST| Auth0
+    Client <--> |REST| Auth["Third-Party Auth"]
     Client["<b>Client</b>"] <-->|REST| Broker["<b>Broker</b><br>(Docker)"]
+    Client <--> |REST| CMS
+    Client <--> |REST| S3["AWS S3"]
     Broker <-->|gRPC| User["<b>User</b><br>(Docker)"]
-    Broker <-->|gRPC| Courses["<b>Courses</b><br>(Docker)"]
     Broker <-->|gRPC| Progression["<b>Progression</b><br>(Docker)"]
     Broker <-->|gRPC| Mail["<b>Mail</b><br>(Docker)"]
     Broker <-->|gRPC| Judge["<b>Judge</b><br>(Docker)"]
+    Notification <--> Firebase
+    Client <--> Firebase
+    Client <--> Notification
     Judge <-->|gRPC| Compiler
-    Judge --> Firebase
+    Judge --> MongoDB
     Broker <-->|gRPC| Compiler["<b>Compiler</b><br>(Docker)"]
     User -->|gRPC| PostgreSQL["<b>PostgreSQL</b>"]
-    Courses --> |gRPC| MongoDB["<b>MongoDB</b>"]
-    Progression --> |gRPC| MongoDB["<b>MongoDB</b>"]
-    Mail -->|gRPC| Mailhog["<b>Mailhog</b><br>(Docker)"]
+    Progression --> |gRPC| Firebase["<b>Firebase</b>"]
 ```
 
 There are currently 7 API microservices:
