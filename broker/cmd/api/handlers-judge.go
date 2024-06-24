@@ -7,8 +7,55 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (api *Service) HandleRunTests(windows http.ResponseWriter, r *http.Request) {
+func (api *Service) HandleRunTests(w http.ResponseWriter, r *http.Request) {
+	taskId := chi.URLParam(r, "task_id")
 
+	api.Log.Info("Received RunTests request", "task_id", taskId)
+
+	var requestPayload RunTestsRequest
+	err := api.readJSON(w, r, &requestPayload)
+	if err != nil {
+		api.Log.Error("Failed to read JSON", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	api.Log.Info("Successfully parsed request payload", "task_id", taskId)
+
+	client, err := api.getJudgeServiceClient()
+	if err != nil {
+		api.Log.Error("Failed to get JudgeService client", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	api.Log.Info("Successfully connected to JudgeService", "task_id", taskId)
+
+	results, err := client.Client.RunTests(client.Ctx, &judge.RunTestsRequest{
+		TaskId:   taskId,
+		Code:     requestPayload.Code,
+		Language: requestPayload.Language,
+	})
+
+	if err != nil {
+		api.Log.Error("Failed to run tests", "error", err)
+		api.errorJSON(w, err)
+		return
+	}
+
+	api.Log.Info("Successfully ran tests", "task_id", taskId)
+
+	responsePayload := JsonResponse{
+		Error:   false,
+		Message: "Successfully ran tests",
+		Data:    results.Results,
+	}
+
+	api.writeJSON(w, http.StatusOK, responsePayload)
+	api.Log.Info("Response sent", "task_id", taskId)
 }
 
 func (api *Service) HandleCreateTestCase(w http.ResponseWriter, r *http.Request) {

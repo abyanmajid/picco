@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
+	"github.com/abyanmajid/codemore.io/judge/proto/compiler"
 	judge "github.com/abyanmajid/codemore.io/judge/proto/judge"
 	"github.com/abyanmajid/codemore.io/judge/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -152,4 +154,64 @@ func (api *Service) DeleteTestCase(ctx context.Context, req *judge.DeleteTestCas
 	}
 
 	return &judge.DeleteTestCaseResponse{}, nil
+}
+
+func (api *Service) RunTests(ctx context.Context, req *judge.RunTestsRequest) (*judge.RunTestsResponse, error) {
+	code := req.GetCode()
+	language := req.GetLanguage()
+	taskId := req.GetTaskId()
+
+	api.Log.Info("Running tests", "task_id", taskId, "language", language)
+
+	testCasesResponse, err := api.GetAllTestCases(ctx, &judge.GetAllTestCasesRequest{
+		TaskId: taskId,
+	})
+	if err != nil {
+		api.Log.Error("Failed to get test cases", "task_id", taskId, "error", err)
+		return nil, fmt.Errorf("failed to get test cases: %v", err)
+	}
+
+	client, err := api.getCompilerServiceClient()
+	if err != nil {
+		api.Log.Error("Failed to get compiler service client", "task_id", taskId, "error", err)
+		return nil, fmt.Errorf("failed to get compiler service client: %v", err)
+	}
+	defer client.Conn.Close()
+	defer client.Cancel()
+
+	var results []*judge.TestResult
+
+	for _, testCase := range testCasesResponse.GetTestcases() {
+		api.Log.Info("Executing test case", "test_case_id", testCase.GetXId())
+
+		inputs, err := json.Marshal(testCase.GetInputs())
+		if err != nil {
+			api.Log.Error("Failed to marshal inputs", "test_case_id", testCase.GetXId(), "error", err)
+			return nil, fmt.Errorf("failed to marshal inputs for test case %s: %v", testCase.GetXId(), err)
+		}
+
+		// Communicate with the execution microservice
+		output, err := client.Client.Execute(ctx, &compiler.SourceCode{
+			Code:     code,
+			Language: language,
+			Args:     []string{string(inputs)},
+		})
+		if err != nil {
+			api.Log.Error("Failed to execute test case", "test_case_id", testCase.GetXId(), "error", err)
+			return nil, fmt.Errorf("failed to execute test case %s: %v", testCase.GetXId(), err)
+		}
+
+		result := &judge.TestResult{
+			XId:            testCase.GetXId(),
+			Passed:         output.GetOutput() == testCase.GetExpectedOutput(),
+			Output:         output.GetOutput(),
+			ExpectedOutput: testCase.GetExpectedOutput(),
+		}
+
+		results = append(results, result)
+	}
+
+	api.Log.Info("Successfully ran tests", "task_id", taskId)
+
+	return &judge.RunTestsResponse{Results: results}, nil
 }
