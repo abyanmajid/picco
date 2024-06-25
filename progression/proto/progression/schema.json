@@ -1,0 +1,24 @@
+{
+    "_id": "this",
+    "user_id": "",
+    "user_email": "",
+    "courses": [
+        {
+            "course_id": "some id",
+            "course_name": "introduction-to-programming",
+            "modules": {
+                "module_id": "some id",
+                "tasks": [
+                    {
+                        "task_id": "some_id",
+                        "completed": true
+                    },
+                    {
+                        "task_id": "some_id",
+                        "completed": false
+                    }
+                ]
+            }
+        }
+    ]
+}

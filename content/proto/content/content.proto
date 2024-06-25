@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package content;
+
+option go_package = "/content";
+
+// Service definition for CourseService
+service ContentService {
+  rpc CreateCourse(CreateCourseRequest) returns (CreateCourseResponse);
+  rpc GetAllCourses(GetAllCoursesRequest) returns (GetAllCoursesResponse);
+  rpc GetCourse(GetCourseRequest) returns (GetCourseResponse);
+  rpc UpdateCourse(UpdateCourseRequest) returns (UpdateCourseResponse);
+  rpc DeleteCourse(DeleteCourseRequest) returns (DeleteCourseResponse);
+}
+
+// The Course message representing a course object
+message Course {
+  string id = 1;
+  string title = 2;
+  string creator = 3;
+  int32 likes = 4;
+  repeated string topics = 5;
+  repeated Module modules = 6;
+  string updated_at = 7;
+  string created_at = 8;
+}
+
+// The Module message representing a module within a course
+message Module {
+  string id = 1;
+  string title = 2;
+  repeated Task tasks = 3;
+}
+
+// The Task message representing a task within a module
+message Task {
+  string id = 1;
+  string title = 2;
+  string mdx = 3;
+}
+
+// Request message for creating a new course
+message CreateCourseRequest {
+  string title = 1;
+  string creator = 2;
+}
+
+// Response message for creating a new course
+message CreateCourseResponse {
+  Course course = 1;
+}
+
+// Request message for retrieving a course by id
+message GetCourseRequest {
+  string id = 1;
+}
+
+// Response message for retrieving a course by id
+message GetCourseResponse {
+  Course course = 1;
+}
+
+// Request message for updating an existing course
+message UpdateCourseRequest {
+  string id = 1;
+  string title = 2;
+  string creator = 3;
+  int32 likes = 4;
+  repeated string topics = 5;
+  repeated Module modules = 6;
+  string updated_at = 7;
+}
+
+// Response message for updating an existing course
+message UpdateCourseResponse {
+  Course course = 1;
+}
+
+// Request message for deleting a course by id
+message DeleteCourseRequest {
+  string id = 1;
+}
+
+// Response message for deleting a course by id
+message DeleteCourseResponse {
+  bool success = 1;
+}
+
+// Request message for retrieving all courses
+message GetAllCoursesRequest {}
+
+// Response message for retrieving all courses
+message GetAllCoursesResponse {
+  repeated Course courses = 1;
+}

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package progression;
+
+option go_package = "/progression";
+
+// service JudgeService {
+//     rpc CreateTestCase(CreateTestCaseRequest) returns (TestCase);
+//     rpc GetAllTestCases(GetAllTestCasesRequest) returns (GetAllTestCasesResponse);
+//     rpc GetTestCase(GetTestCaseRequest) returns (TestCase);
+//     rpc UpdateTestCase(UpdateTestCaseRequest) returns (TestCase);
+//     rpc DeleteTestCase(DeleteTestCaseRequest) returns (DeleteTestCaseResponse);
+//     rpc RunTests(RunTestsRequest) returns (RunTestsResponse);
+// }
+
+// message RunTestsRequest {
+//     string task_id = 1;
+//     string code = 2;
+//     string language = 3;
+// }
+
+// {
+//     "_id": "this",
+//     "user_id": "",
+//     "user_email": "",
+//     "courses": [
+//         {
+//             "course_id": "some id",
+//             "course_name": "introduction-to-programming",
+//             "modules": {
+//                 "module_id": "some id",
+//                 "tasks": [
+//                     {
+//                         "task_id": "some_id",
+//                         "completed": true
+//                     },
+//                     {
+//                         "task_id": "some_id",
+//                         "completed": false
+//                     }
+//                 ]
+//             }
+//         }
+//     ]
+// }

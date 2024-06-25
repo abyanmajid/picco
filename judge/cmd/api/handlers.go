@@ -19,7 +19,7 @@ func (api *Service) CreateTestCase(ctx context.Context, req *judge.CreateTestCas
 		ExpectedOutput: req.GetExpectedOutput(),
 	}
 
-	collection := api.Mongo.Database("testcases").Collection("testcases")
+	collection := api.Mongo.Database("db").Collection("testcases")
 	doc, err := collection.InsertOne(ctx, testCase)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (api *Service) CreateTestCase(ctx context.Context, req *judge.CreateTestCas
 }
 
 func (api *Service) GetAllTestCases(ctx context.Context, req *judge.GetAllTestCasesRequest) (*judge.GetAllTestCasesResponse, error) {
-	collection := api.Mongo.Database("testcases").Collection("testcases")
+	collection := api.Mongo.Database("db").Collection("testcases")
 
 	filter := bson.M{"task_id": req.GetTaskId()}
 
@@ -77,7 +77,7 @@ func (api *Service) GetAllTestCases(ctx context.Context, req *judge.GetAllTestCa
 }
 
 func (api *Service) GetTestCase(ctx context.Context, req *judge.GetTestCaseRequest) (*judge.TestCase, error) {
-	collection := api.Mongo.Database("testcases").Collection("testcases")
+	collection := api.Mongo.Database("db").Collection("testcases")
 
 	objectID, err := primitive.ObjectIDFromHex(req.GetXId())
 	if err != nil {
@@ -101,7 +101,7 @@ func (api *Service) GetTestCase(ctx context.Context, req *judge.GetTestCaseReque
 }
 
 func (api *Service) UpdateTestCase(ctx context.Context, req *judge.UpdateTestCaseRequest) (*judge.TestCase, error) {
-	collection := api.Mongo.Database("testcases").Collection("testcases")
+	collection := api.Mongo.Database("db").Collection("testcases")
 
 	// Convert the string ID to an ObjectID
 	objectID, err := primitive.ObjectIDFromHex(req.GetXId())
@@ -140,7 +140,7 @@ func (api *Service) UpdateTestCase(ctx context.Context, req *judge.UpdateTestCas
 }
 
 func (api *Service) DeleteTestCase(ctx context.Context, req *judge.DeleteTestCaseRequest) (*judge.DeleteTestCaseResponse, error) {
-	collection := api.Mongo.Database("testcases").Collection("testcases")
+	collection := api.Mongo.Database("db").Collection("testcases")
 	objectID, err := primitive.ObjectIDFromHex(req.GetXId())
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID format: %v", err)

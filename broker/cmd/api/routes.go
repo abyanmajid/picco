@@ -42,5 +42,12 @@ func (api *Service) routes() http.Handler {
 	router.Put("/judge/testcases/{task_id}/{test_case_id}", api.HandleUpdateTestCase)
 	router.Delete("/judge/testcases/{task_id}/{test_case_id}", api.HandleDeleteTestCase)
 
+	// Proxying routes for content service
+	router.Post("/content", api.HandleCreateCourse)
+	router.Get("/content", api.HandleGetAllCourses)
+	router.Get("/content/id/{id}", api.HandleGetCourseById)
+	router.Put("/content/id/{id}", api.HandleUpdateCourseById)
+	router.Delete("/content/id/{id}", api.HandleDeleteCourseById)
+
 	return router
 }

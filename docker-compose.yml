@@ -30,6 +30,20 @@ services:
       ENVIRONMENT: development
       # PRODUCTION_DB_URL:
 
+  content:
+    container_name: content
+    build:
+      context: ./content
+      dockerfile: ./content.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      ENVIRONMENT: development
+      # PRODUCTION_DB_URL:
+      # PRODUCTION_DB_USERNAME:
+
   judge:
     container_name: judge
     build:
@@ -76,7 +90,7 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: testcases
+      MONGO_INITDB_DATABASE: db
       MONGO_INITDB_ROOT_USERNAME: mongo
       MONGO_INITDB_ROOT_PASSWORD: mongo
     volumes:

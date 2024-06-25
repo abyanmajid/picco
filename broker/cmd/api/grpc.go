@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/abyanmajid/codemore.io/broker/proto/compiler"
+	"github.com/abyanmajid/codemore.io/broker/proto/content"
 	"github.com/abyanmajid/codemore.io/broker/proto/judge"
 	"github.com/abyanmajid/codemore.io/broker/proto/user"
 	"google.golang.org/grpc"
@@ -70,6 +71,28 @@ func (api *Service) getJudgeServiceClient() (*JudgeServiceClient, error) {
 	api.Log.Info("gRPC client created successfully")
 
 	return &JudgeServiceClient{
+		Client: client,
+		Conn:   conn,
+		Ctx:    ctx,
+		Cancel: cancel,
+	}, nil
+}
+
+func (api *Service) getContentServiceClient() (*ContentServiceClient, error) {
+	api.Log.Info("Creating new gRPC client", "endpoint", api.ContentEndpoint)
+
+	conn, err := grpc.NewClient(api.ContentEndpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		api.Log.Error("Failed to create gRPC client connection", "error", err)
+		return nil, err
+	}
+
+	client := content.NewContentServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
+	api.Log.Info("gRPC client created successfully")
+
+	return &ContentServiceClient{
 		Client: client,
 		Conn:   conn,
 		Ctx:    ctx,

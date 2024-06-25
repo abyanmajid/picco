@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/abyanmajid/codemore.io/broker/proto/compiler"
+	"github.com/abyanmajid/codemore.io/broker/proto/content"
 	"github.com/abyanmajid/codemore.io/broker/proto/judge"
 	"github.com/abyanmajid/codemore.io/broker/proto/user"
 	"google.golang.org/grpc"
@@ -14,6 +15,7 @@ type Service struct {
 	UserEndpoint     string
 	CompilerEndpoint string
 	JudgeEndpoint    string
+	ContentEndpoint  string
 	Log              *slog.Logger
 }
 
@@ -43,6 +45,13 @@ type CompilerServiceClient struct {
 
 type JudgeServiceClient struct {
 	Client judge.JudgeServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
+}
+
+type ContentServiceClient struct {
+	Client content.ContentServiceClient
 	Conn   *grpc.ClientConn
 	Ctx    context.Context
 	Cancel context.CancelFunc
@@ -83,4 +92,27 @@ type TestCase struct {
 type RunTestsRequest struct {
 	Code     string `json:"code"`
 	Language string `json:"language"`
+}
+
+type Course struct {
+	Id        string   `json:"id"`
+	Title     string   `json:"title"`
+	Creator   string   `json:"creator"`
+	Likes     int32    `json:"likes"`
+	Topics    []string `json:"topics"`
+	Modules   []Module `json:"modules"`
+	UpdatedAt string   `json:"updated_at"`
+	CreatedAt string   `json:"created_at"`
+}
+
+type Module struct {
+	Id    string `json:"id"`
+	Title string `json:"title"`
+	Tasks []Task `json:"tasks"`
+}
+
+type Task struct {
+	Id    string `json:"id"`
+	Title string `json:"title"`
+	Mdx   string `json:"mdx"`
 }

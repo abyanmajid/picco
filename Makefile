@@ -2,6 +2,7 @@ BROKER_BINARY=broker
 USER_BINARY=user
 COMPILER_BINARY=compiler
 JUDGE_BINARY=judge
+CONTENT_BINARY=content
 
 # up: starts all containers in the background without forcing build
 up:
@@ -16,7 +17,7 @@ down:
 	@echo "[codemore.io] Containers has successfully been stopped!"
 
 # build: stops docker-compose (if running), builds all projects and starts docker compose
-build: build-broker build-user build-compiler build-judge
+build: build-broker build-user build-compiler build-judge build-content
 	@echo "[codemore.io] Stopping docker images (if running...)"
 	docker-compose down
 	@echo "[codemore.io] Building (when required) and starting docker images..."
@@ -46,6 +47,12 @@ build-judge:
 	@echo "[codemore.io] Building judge..."
 	cd ./judge && env GOOS=linux CGO_ENABLED=0 go build -o ${JUDGE_BINARY} ./cmd/api
 	@echo "[codemore.io] Judge has successfully been built!"
+
+# build-content: build linux executable for content service
+build-content:
+	@echo "[codemore.io] Building content..."
+	cd ./content && env GOOS=linux CGO_ENABLED=0 go build -o ${CONTENT_BINARY} ./cmd/api
+	@echo "[codemore.io] Content has successfully been built!"
 
 # users-migrate-up: run goose migrate up for users database
 users-migrate-up:
