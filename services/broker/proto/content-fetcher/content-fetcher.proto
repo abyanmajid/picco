@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cf;
+
+option go_package = "/cf";
+
+service ContentFetcherService {
+  rpc GetContent(GetContentRequest) returns (GetContentResponse);
+}
+
+message GetContentRequest {
+  string path = 1; 
+}
+
+message GetContentResponse {
+  string mdx = 1; 
+}

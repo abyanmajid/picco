@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package judge;
+
+option go_package = "/judge";
+
+service JudgeService {
+    rpc CreateTestCase(CreateTestCaseRequest) returns (TestCase);
+    rpc GetAllTestCases(GetAllTestCasesRequest) returns (GetAllTestCasesResponse);
+    rpc GetTestCase(GetTestCaseRequest) returns (TestCase);
+    rpc UpdateTestCase(UpdateTestCaseRequest) returns (TestCase);
+    rpc DeleteTestCase(DeleteTestCaseRequest) returns (DeleteTestCaseResponse);
+    rpc RunTests(RunTestsRequest) returns (RunTestsResponse);
+}
+
+message RunTestsRequest {
+    string task_id = 1;
+    string code = 2;
+    string language = 3;
+}
+
+message TestResult {
+    string _id = 1;
+    bool passed = 2;
+    string output = 3;
+    string expected_output = 4;
+}
+
+message RunTestsResponse {
+    repeated TestResult results = 1;
+}
+
+message TestCase {
+    string _id = 1;
+    string task_id = 2;
+    repeated string inputs = 3;
+    string expected_output = 4;
+}
+
+message CreateTestCaseRequest {
+    string task_id = 1;
+    repeated string inputs = 2;
+    string expected_output = 3;
+}
+
+message GetAllTestCasesRequest {
+    string task_id = 1;
+}
+
+message GetAllTestCasesResponse {
+    repeated TestCase testcases = 1;
+}
+
+message GetTestCaseRequest {
+    string _id = 1;
+}
+
+message UpdateTestCaseRequest {
+    string _id = 1;
+    repeated string inputs = 2;
+    string expected_output = 3;
+}
+
+message DeleteTestCaseRequest {
+    string _id = 1;
+}
+
+message DeleteTestCaseResponse {
+    bool success = 1;
+}

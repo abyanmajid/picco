@@ -3,7 +3,7 @@ services:
   broker:
     container_name: broker
     build:
-      context: ./broker
+      context: ./services/broker
       dockerfile: ./broker.dockerfile
     restart: always
     ports:
@@ -11,63 +11,56 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-    environment:
-      ENVIRONMENT: development
-      # PRODUCTION_USER_ENDPOINT:
-      # PRODUCTION_COMPILER_ENDPOINT:
-      # PRODUCTION_JUDGE_ENDPOINT:
+    env_file:
+      - .env
 
   user:
     container_name: user
     build:
-      context: ./user
+      context: ./services/user
       dockerfile: ./user.dockerfile
     restart: always
     deploy:
       mode: replicated
       replicas: 1
-    environment:
-      ENVIRONMENT: development
-      # PRODUCTION_DB_URL:
+    env_file:
+      - .env
 
-  content:
-    container_name: content
+  content-fetcher:
+    container_name: content-fetcher
     build:
-      context: ./content
-      dockerfile: ./content.dockerfile
+      context: ./services/content-fetcher
+      dockerfile: ./content-fetcher.dockerfile
     restart: always
     deploy:
       mode: replicated
       replicas: 1
-    environment:
-      ENVIRONMENT: development
-      # PRODUCTION_DB_URL:
-      # PRODUCTION_DB_USERNAME:
+    env_file: 
+      - .env
 
   judge:
     container_name: judge
     build:
-      context: ./judge
+      context: ./services/judge
       dockerfile: ./judge.dockerfile
     restart: always
     deploy:
       mode: replicated
       replicas: 1
-    environment:
-      ENVIRONMENT: development
-      # PRODUCTION_DB_URL:
-      # PRODUCTION_DB_USERNAME:
-      # PRODUCTION_DB_PASSWORD:
+    env_file:
+      - .env
 
   compiler:
     container_name: compiler
     build:
-      context: ./compiler
+      context: ./services/compiler
       dockerfile: ./compiler.dockerfile
     restart: always
     deploy:
       mode: replicated
       replicas: 1
+    env_file:
+      - .env
 
   postgres:
     container_name: db-users
@@ -77,10 +70,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: users
+    env_file:
+      - .env
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
 
@@ -89,9 +80,7 @@ services:
     image: 'mongo:4.2.16-bionic'
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: db
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo
+    env_file:
+      - .env
     volumes:
       - ./db-data/mongo/:/data/db
