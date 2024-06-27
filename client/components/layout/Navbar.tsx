@@ -22,6 +22,7 @@ import {
   SearchIcon,
 } from "@/components/ui/icons";
 import { getSession } from "@auth0/nextjs-auth0";
+import { Chip } from "@nextui-org/react"
 
 export default async function Navbar() {
   const session = await getSession();
@@ -53,7 +54,7 @@ export default async function Navbar() {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <p className="font-bold text-inherit">codemore.io</p>
+            <p className="font-bold text-inherit">codemore.io&nbsp;<Chip color="primary" variant="flat" radius="sm">Beta</Chip></p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">

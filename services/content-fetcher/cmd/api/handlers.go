@@ -6,26 +6,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	cf "github.com/abyanmajid/codemore.io/services/content-fetcher/proto/content-fetcher"
 )
 
 func (api *Service) GetContent(ctx context.Context, req *cf.GetContentRequest) (*cf.GetContentResponse, error) {
-
 	filePath := req.GetPath()
 	url := GITHUB_API_CONTENTS_ENDPOINT + filePath
 
-	api.Log.Info("Creating HTTP request", "url", url)
-
+	log.Printf("Creating HTTP request: %s\n", url)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		api.Log.Error("Error creating request", "error", err)
+		log.Printf("Error creating request: %v\n", err)
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
 
 	if api.Token == "" {
-		api.Log.Error("Authorization token is missing")
+		log.Println("Authorization token is missing")
 		return nil, fmt.Errorf("authorization token is missing")
 	}
 
@@ -33,51 +32,54 @@ func (api *Service) GetContent(ctx context.Context, req *cf.GetContentRequest) (
 	request.Header.Set("Authorization", "Bearer "+api.Token)
 	request.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
-	api.Log.Info("Sending HTTP request to GitHub API")
+	log.Println("Sending HTTP request to GitHub API")
 	client := &http.Client{}
 	resp, err := client.Do(request)
 	if err != nil {
-		api.Log.Error("Error making request", "error", err)
+		log.Printf("Error making request: %v\n", err)
 		return nil, fmt.Errorf("error making request: %v", err)
 	}
 	defer func() {
 		resp.Body.Close()
-		api.Log.Info("Response body closed")
+		log.Println("Response body closed")
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		api.Log.Error("Received non-200 response status", "status", resp.Status)
+		log.Printf("Received non-200 response status: %s\n", resp.Status)
 		return nil, fmt.Errorf("error: received non-200 response status: %v", resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		api.Log.Error("Error reading response body", "error", err)
+		log.Printf("Error reading response body: %v\n", err)
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
-	api.Log.Info("Successfully read response body")
+	log.Println("Successfully read response body")
 
 	var content GitHubContent
 	if err := json.Unmarshal(body, &content); err != nil {
-		api.Log.Error("Error parsing JSON response", "error", err)
+		log.Printf("Error parsing JSON response: %v\n", err)
 		return nil, fmt.Errorf("error parsing JSON response: %v", err)
 	}
-	api.Log.Info("Successfully parsed JSON response")
+	log.Println("Successfully parsed JSON response")
+
+	log.Printf("Content encoding: %s\n", content.Encoding)
+	log.Printf("Content: %s\n", content.Content)
 
 	if content.Encoding == "base64" {
 		decodedBytes, err := base64.StdEncoding.DecodeString(content.Content)
 		if err != nil {
-			api.Log.Error("Error decoding base64 content", "error", err)
+			log.Printf("Error decoding base64 content: %v\n", err)
 			return nil, fmt.Errorf("error decoding base64 content: %v", err)
 		}
 		decodedContent := string(decodedBytes)
-		api.Log.Info("Successfully decoded base64 content")
+		log.Println("Successfully decoded base64 content")
 
 		return &cf.GetContentResponse{
-			Mdx: decodedContent,
+			Data: decodedContent,
 		}, nil
 	}
 
-	api.Log.Error("Unexpected content encoding", "encoding", content.Encoding)
+	log.Printf("Unexpected content encoding: %s\n", content.Encoding)
 	return nil, fmt.Errorf("unexpected content encoding: %v", content.Encoding)
 }

@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type TestCase struct {
@@ -12,19 +12,15 @@ type TestCase struct {
 	ExpectedOutput string   `json:"expected_output"`
 }
 
-func DecodeBase64JSON(encodedStr string) ([]TestCase, error) {
-	// Step 1: Decode the base64 string
-	decodedBytes, err := base64.StdEncoding.DecodeString(encodedStr)
-	if err != nil {
-		return nil, fmt.Errorf("error decoding base64 string: %v", err)
-	}
-
-	// Step 2: Unmarshal the JSON data into a Go data structure
+func DecodeJSON(encodedStr string) ([]TestCase, error) {
+	log.Println("Unmarshalling JSON data")
 	var data []TestCase
-	err = json.Unmarshal(decodedBytes, &data)
+	err := json.Unmarshal([]byte(encodedStr), &data)
 	if err != nil {
+		log.Printf("Error unmarshalling JSON data: %v\n", err)
 		return nil, fmt.Errorf("error unmarshalling JSON: %v", err)
 	}
 
+	log.Printf("Successfully unmarshalled JSON data: %d test cases\n", len(data))
 	return data, nil
 }

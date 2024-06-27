@@ -22,11 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JudgeServiceClient interface {
-	CreateTestCase(ctx context.Context, in *CreateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error)
-	GetAllTestCases(ctx context.Context, in *GetAllTestCasesRequest, opts ...grpc.CallOption) (*GetAllTestCasesResponse, error)
-	GetTestCase(ctx context.Context, in *GetTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error)
-	UpdateTestCase(ctx context.Context, in *UpdateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error)
-	DeleteTestCase(ctx context.Context, in *DeleteTestCaseRequest, opts ...grpc.CallOption) (*DeleteTestCaseResponse, error)
+	GetTestCase(ctx context.Context, in *GetTestCasesRequest, opts ...grpc.CallOption) (*GetTestCasesResponse, error)
 	RunTests(ctx context.Context, in *RunTestsRequest, opts ...grpc.CallOption) (*RunTestsResponse, error)
 }
 
@@ -38,45 +34,9 @@ func NewJudgeServiceClient(cc grpc.ClientConnInterface) JudgeServiceClient {
 	return &judgeServiceClient{cc}
 }
 
-func (c *judgeServiceClient) CreateTestCase(ctx context.Context, in *CreateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error) {
-	out := new(TestCase)
-	err := c.cc.Invoke(ctx, "/judge.JudgeService/CreateTestCase", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *judgeServiceClient) GetAllTestCases(ctx context.Context, in *GetAllTestCasesRequest, opts ...grpc.CallOption) (*GetAllTestCasesResponse, error) {
-	out := new(GetAllTestCasesResponse)
-	err := c.cc.Invoke(ctx, "/judge.JudgeService/GetAllTestCases", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *judgeServiceClient) GetTestCase(ctx context.Context, in *GetTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error) {
-	out := new(TestCase)
+func (c *judgeServiceClient) GetTestCase(ctx context.Context, in *GetTestCasesRequest, opts ...grpc.CallOption) (*GetTestCasesResponse, error) {
+	out := new(GetTestCasesResponse)
 	err := c.cc.Invoke(ctx, "/judge.JudgeService/GetTestCase", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *judgeServiceClient) UpdateTestCase(ctx context.Context, in *UpdateTestCaseRequest, opts ...grpc.CallOption) (*TestCase, error) {
-	out := new(TestCase)
-	err := c.cc.Invoke(ctx, "/judge.JudgeService/UpdateTestCase", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *judgeServiceClient) DeleteTestCase(ctx context.Context, in *DeleteTestCaseRequest, opts ...grpc.CallOption) (*DeleteTestCaseResponse, error) {
-	out := new(DeleteTestCaseResponse)
-	err := c.cc.Invoke(ctx, "/judge.JudgeService/DeleteTestCase", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,11 +56,7 @@ func (c *judgeServiceClient) RunTests(ctx context.Context, in *RunTestsRequest, 
 // All implementations must embed UnimplementedJudgeServiceServer
 // for forward compatibility
 type JudgeServiceServer interface {
-	CreateTestCase(context.Context, *CreateTestCaseRequest) (*TestCase, error)
-	GetAllTestCases(context.Context, *GetAllTestCasesRequest) (*GetAllTestCasesResponse, error)
-	GetTestCase(context.Context, *GetTestCaseRequest) (*TestCase, error)
-	UpdateTestCase(context.Context, *UpdateTestCaseRequest) (*TestCase, error)
-	DeleteTestCase(context.Context, *DeleteTestCaseRequest) (*DeleteTestCaseResponse, error)
+	GetTestCase(context.Context, *GetTestCasesRequest) (*GetTestCasesResponse, error)
 	RunTests(context.Context, *RunTestsRequest) (*RunTestsResponse, error)
 	mustEmbedUnimplementedJudgeServiceServer()
 }
@@ -109,20 +65,8 @@ type JudgeServiceServer interface {
 type UnimplementedJudgeServiceServer struct {
 }
 
-func (UnimplementedJudgeServiceServer) CreateTestCase(context.Context, *CreateTestCaseRequest) (*TestCase, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateTestCase not implemented")
-}
-func (UnimplementedJudgeServiceServer) GetAllTestCases(context.Context, *GetAllTestCasesRequest) (*GetAllTestCasesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllTestCases not implemented")
-}
-func (UnimplementedJudgeServiceServer) GetTestCase(context.Context, *GetTestCaseRequest) (*TestCase, error) {
+func (UnimplementedJudgeServiceServer) GetTestCase(context.Context, *GetTestCasesRequest) (*GetTestCasesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTestCase not implemented")
-}
-func (UnimplementedJudgeServiceServer) UpdateTestCase(context.Context, *UpdateTestCaseRequest) (*TestCase, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTestCase not implemented")
-}
-func (UnimplementedJudgeServiceServer) DeleteTestCase(context.Context, *DeleteTestCaseRequest) (*DeleteTestCaseResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTestCase not implemented")
 }
 func (UnimplementedJudgeServiceServer) RunTests(context.Context, *RunTestsRequest) (*RunTestsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunTests not implemented")
@@ -140,44 +84,8 @@ func RegisterJudgeServiceServer(s grpc.ServiceRegistrar, srv JudgeServiceServer)
 	s.RegisterService(&JudgeService_ServiceDesc, srv)
 }
 
-func _JudgeService_CreateTestCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateTestCaseRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JudgeServiceServer).CreateTestCase(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/judge.JudgeService/CreateTestCase",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JudgeServiceServer).CreateTestCase(ctx, req.(*CreateTestCaseRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JudgeService_GetAllTestCases_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllTestCasesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JudgeServiceServer).GetAllTestCases(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/judge.JudgeService/GetAllTestCases",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JudgeServiceServer).GetAllTestCases(ctx, req.(*GetAllTestCasesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _JudgeService_GetTestCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTestCaseRequest)
+	in := new(GetTestCasesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -189,43 +97,7 @@ func _JudgeService_GetTestCase_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/judge.JudgeService/GetTestCase",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JudgeServiceServer).GetTestCase(ctx, req.(*GetTestCaseRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JudgeService_UpdateTestCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTestCaseRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JudgeServiceServer).UpdateTestCase(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/judge.JudgeService/UpdateTestCase",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JudgeServiceServer).UpdateTestCase(ctx, req.(*UpdateTestCaseRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JudgeService_DeleteTestCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteTestCaseRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JudgeServiceServer).DeleteTestCase(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/judge.JudgeService/DeleteTestCase",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JudgeServiceServer).DeleteTestCase(ctx, req.(*DeleteTestCaseRequest))
+		return srv.(JudgeServiceServer).GetTestCase(ctx, req.(*GetTestCasesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -256,24 +128,8 @@ var JudgeService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*JudgeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateTestCase",
-			Handler:    _JudgeService_CreateTestCase_Handler,
-		},
-		{
-			MethodName: "GetAllTestCases",
-			Handler:    _JudgeService_GetAllTestCases_Handler,
-		},
-		{
 			MethodName: "GetTestCase",
 			Handler:    _JudgeService_GetTestCase_Handler,
-		},
-		{
-			MethodName: "UpdateTestCase",
-			Handler:    _JudgeService_UpdateTestCase_Handler,
-		},
-		{
-			MethodName: "DeleteTestCase",
-			Handler:    _JudgeService_DeleteTestCase_Handler,
 		},
 		{
 			MethodName: "RunTests",

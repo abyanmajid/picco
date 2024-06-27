@@ -4,32 +4,42 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 
 	"github.com/abyanmajid/codemore.io/services/judge/proto/compiler"
 	cf "github.com/abyanmajid/codemore.io/services/judge/proto/content-fetcher"
 	judge "github.com/abyanmajid/codemore.io/services/judge/proto/judge"
-	utils "github.com/abyanmajid/codemore.io/services/judge/utils"
+	"github.com/abyanmajid/codemore.io/services/judge/utils"
 )
 
 func (api *Service) GetTestCases(ctx context.Context, req *judge.GetTestCasesRequest) (*judge.GetTestCasesResponse, error) {
 	path := req.GetPath()
 
+	api.Log.Info("Getting content fetcher service client")
 	client, err := api.getContentFetcherServiceClient()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get compiler service client: %v", err)
+		return nil, fmt.Errorf("failed to get content fetcher service client: %v", err)
 	}
 	defer client.Conn.Close()
 	defer client.Cancel()
 
+	api.Log.Info("Fetching test cases", slog.String("path", path+"/testcases.json"))
 	res, err := client.Client.GetContent(client.Ctx, &cf.GetContentRequest{
-		Path: path,
+		Path: path + "/testcases.json",
 	})
-
-	jsonTests, err := utils.DecodeBase64JSON(res.Data)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("THE DATA:\n", res.Data)
+
+	api.Log.Info("Decoding base64 JSON test cases")
+	jsonTests, err := utils.DecodeJSON(res.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	api.Log.Info("Mapping JSON test cases to judge.TestCase")
 	testCases := make([]*judge.TestCase, len(jsonTests))
 	for i, testCase := range jsonTests {
 		testCases[i] = &judge.TestCase{
@@ -39,6 +49,7 @@ func (api *Service) GetTestCases(ctx context.Context, req *judge.GetTestCasesReq
 		}
 	}
 
+	api.Log.Info("Successfully fetched and decoded test cases", slog.Int("count", len(testCases)))
 	return &judge.GetTestCasesResponse{
 		Testcases: testCases,
 	}, nil
@@ -52,6 +63,7 @@ func (api *Service) RunTests(ctx context.Context, req *judge.RunTestsRequest) (*
 	testCasesResponse, err := api.GetTestCases(ctx, &judge.GetTestCasesRequest{
 		Path: path,
 	})
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to get test cases: %v", err)
 	}

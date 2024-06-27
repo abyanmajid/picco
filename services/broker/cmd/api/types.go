@@ -78,7 +78,6 @@ type CompileRequest struct {
 }
 
 type TestResult struct {
-	Id             string `json:"_id"`
 	Passed         bool   `json:"passed"`
 	Output         string `json:"output"`
 	ExpectedOutput string `json:"expected_output"`
@@ -90,6 +89,7 @@ type TestCase struct {
 }
 
 type RunTestsRequest struct {
+	Path     string `json:"path"`
 	Code     string `json:"code"`
 	Language string `json:"language"`
 }

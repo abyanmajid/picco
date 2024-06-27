@@ -13,5 +13,5 @@ message GetContentRequest {
 }
 
 message GetContentResponse {
-  string mdx = 1; 
+  string data = 1; 
 }
