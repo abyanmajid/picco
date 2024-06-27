@@ -23,38 +23,37 @@ All client requests are sent to the `broker` service (which serves as an API gat
 ```mermaid
 graph TD
     Client["<b>Client</b>"]
-    Broker["<b>Broker</b><br>(Docker)"]
+    WS["Web Socket"]
+    Broker["<b>Broker</b><br>(REST)"]
     Auth["Third-Party Auth"]
-    CMS["CMS"]
-    S3["AWS S3"]
-    User["<b>User</b><br>(Docker)"]
-    Progression["<b>Progression</b><br>(Docker)"]
-    Mail["<b>Mail</b><br>(Docker)"]
-    Judge["<b>Judge</b><br>(Docker)"]
-    Notification["<b>Notification</b><br>(Docker)"]
-    Compiler["<b>Compiler</b><br>(Docker)"]
+    S3["Cloud Storage"]
+    GH["GitHub API"]
+    User["<b>User</b><br>(gRPC)"]
+    Progression["<b>Progression</b><br>(gRPC)"]
+    Mail["<b>Mail</b><br>(gRPC)"]
+    CF["<b>Content Fetcher</b><br>(gRPC)"]
+    Judge["<b>Judge</b><br>(gRPC)"]
+    Compiler["<b>Compiler</b><br>(gRPC)"]
     MongoDB["<b>MongoDB</b>"]
-    Firebase["<b>Firebase</b>"]
     PostgreSQL["<b>PostgreSQL</b>"]
 
-    Client <--> |REST| Auth
-    Client <--> |REST| CMS
-    Client <--> |REST| S3
-    Client <--> Firebase
-    Client <-->|REST| Broker
+    Client <--> WS
+    Client <--> Auth
+    Client <--> S3
+    Client <--> Broker
 
-    Broker <-->|gRPC| User
-    Broker <-->|gRPC| Progression
-    Broker <-->|gRPC| Compiler
-    Broker <-->|gRPC| Judge
-    Broker <-->|gRPC| Mail
-    Broker <-->|gRPC| Notification
+    Broker <--> User
+    Broker <--> Progression
+    Broker <--> CF
+    Broker <--> Compiler
+    Broker <--> Judge
+    Broker <--> Mail
 
-    User -->|gRPC| PostgreSQL
-    Progression --> |gRPC| Firebase
-    Judge --> MongoDB
-    Judge <-->|gRPC| Compiler
-    Notification <--> Firebase
+    User --> PostgreSQL
+    Progression --> MongoDB
+    Judge <--> Compiler
+    Judge <--> GH
+    CF <--> GH
 ```
 
 There are currently 7 API microservices:
