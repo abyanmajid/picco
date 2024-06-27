@@ -1,18 +1,7 @@
-<p align="center">
-  <img src="https://github.com/abyanmajid/codemore.io/assets/108279046/040ecbb0-16a1-4dde-ba37-c06d66a80b80" width="75%" height="auto">
-</p>
+# codemore.io
 
-<p align="center">
-  <a href="https://github.com/abyanmajid/codemore.io/blob/main/LICENSE"><img alt="GPL-3.0 License" src="https://img.shields.io/badge/License-GPL%203.0-blue.svg"></a>
-  <img alt="cicd-badge" src="https://github.com/abyanmajid/codemore.io/actions/workflows/cicd.yml/badge.svg">
-  <img alt="Go" src="https://img.shields.io/badge/Go-%2300ADD8.svg?style=flat&logo=go&logoColor=white">
-  <img alt="Next JS" src="https://img.shields.io/badge/Next-black?style=flat&logo=next.js&logoColor=white">
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white">
-  <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat&logo=Kubernetes&logoColor=white">
-</p>
-<p align="center">
-  <b>codemore.io</b> is a distributed app that offers <i>free programming courses</i> in attempt to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by putting great emphasis on <i>writing lots of code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
-</p>
+<b>codemore.io</b> is a distributed app that offers <i>free programming courses</i> in attempt to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by putting great emphasis on <i>writing lots of code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
+
 
 <!-- <h3 align="center"> Live App 🚀 | Demo 📹 | Documentation 🔍 | Source 📦 </h3> -->
 
@@ -23,58 +12,38 @@ All client requests are sent to the `broker` service (which serves as an API gat
 ```mermaid
 graph TD
     Client["<b>Client</b>"]
-    Broker["<b>Broker</b><br>(Docker)"]
+    Feed["<b>Feed</b><br>(WebSocket)"]
+    Broker["<b>Broker</b><br>(REST)"]
     Auth["Third-Party Auth"]
-    CMS["CMS"]
-    S3["AWS S3"]
-    User["<b>User</b><br>(Docker)"]
-    Progression["<b>Progression</b><br>(Docker)"]
-    Mail["<b>Mail</b><br>(Docker)"]
-    Judge["<b>Judge</b><br>(Docker)"]
-    Notification["<b>Notification</b><br>(Docker)"]
-    Compiler["<b>Compiler</b><br>(Docker)"]
+    S3["Cloud Storage"]
+    GH["GitHub API"]
+    User["<b>User</b><br>(gRPC)"]
+    Progression["<b>Progression</b><br>(gRPC)"]
+    Compiler["<b>Compiler</b><br>(gRPC)"]
+    Judge["<b>Judge</b><br>(gRPC)"]
+    CF["<b>Content Fetcher</b><br>(gRPC)"]
+    Mail["<b>Mail</b><br>(gRPC)"]
     MongoDB["<b>MongoDB</b>"]
-    Firebase["<b>Firebase</b>"]
     PostgreSQL["<b>PostgreSQL</b>"]
 
-    Client <--> |REST| Auth
-    Client <--> |REST| CMS
-    Client <--> |REST| S3
-    Client <--> Firebase
-    Client <-->|REST| Broker
+    Client <--> Feed
+    Client <--> Auth
+    Client <--> S3
+    Client <--> Broker
 
-    Broker <-->|gRPC| User
-    Broker <-->|gRPC| Progression
-    Broker <-->|gRPC| Compiler
-    Broker <-->|gRPC| Judge
-    Broker <-->|gRPC| Mail
-    Broker <-->|gRPC| Notification
+    Broker <--> CF
+    Broker <--> Compiler
+    Broker <--> Judge
+    Broker <--> User
+    Broker <--> Progression
+    Broker <--> Mail
 
-    User -->|gRPC| PostgreSQL
-    Progression --> |gRPC| Firebase
-    Judge --> MongoDB
-    Judge <-->|gRPC| Compiler
-    Notification <--> Firebase
+    User --> PostgreSQL
+    Progression --> MongoDB
+    Judge <--> Compiler
+    Judge <--> CF
+    CF <--> GH
 ```
-
-There are currently 7 API microservices:
-
-1. `broker`: An API gateway to proxy requests to the corresponding service
-2. `user`: A microservice responsible for CRUD operations on user information
-3. `courses`: A microservice responsible for CRUD operations on course contents
-4. `progression`: A microservice responsible for fetching and updating user progress on courses
-5. `mail`: A microservice responsible for sending mails
-6. `judge`: A microservice responsible for running test cases on code outputs
-7. `compiler`: A microservice responsible for compiling user-submitted code
-
-## Design Choices
-
-- Credentials and OAuth2 token-based authentication with JWT
-- Role-Based Access Control (RBAC) Authorization
-- Asynchronous communication between microservices via gRPC
-- Synchronous communication between client and broker via REST
-- Sandboxing of code execution in a docker container
-- Structured logging to output stream
 
 ## Contributing
 
