@@ -38,7 +38,7 @@ func (api *Service) HandleGetContent(w http.ResponseWriter, r *http.Request) {
 	responsePayload := JsonResponse{
 		Error:   false,
 		Message: "Successfully fetched content",
-		Data:    res.Mdx,
+		Data:    res.Data,
 	}
 
 	api.writeJSON(w, http.StatusOK, responsePayload)

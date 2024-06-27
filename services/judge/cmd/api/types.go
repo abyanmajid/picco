@@ -5,17 +5,16 @@ import (
 	"log/slog"
 
 	compiler "github.com/abyanmajid/codemore.io/services/judge/proto/compiler"
+	cf "github.com/abyanmajid/codemore.io/services/judge/proto/content-fetcher"
 	judge "github.com/abyanmajid/codemore.io/services/judge/proto/judge"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 )
 
 type Service struct {
 	judge.UnimplementedJudgeServiceServer
-	CompilerEndpoint string
-	Mongo            *mongo.Client
-	Log              *slog.Logger
+	CompilerEndpoint       string
+	ContentFetcherEndpoint string
+	Log                    *slog.Logger
 }
 
 type CompilerServiceClient struct {
@@ -25,9 +24,19 @@ type CompilerServiceClient struct {
 	Cancel context.CancelFunc
 }
 
+type ContentFetcherServiceClient struct {
+	Client cf.ContentFetcherServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
+}
+
 type TestCase struct {
-	Id             primitive.ObjectID `bson:"_id,omitempty"`
-	TaskId         string             `bson:"task_id"`
-	Inputs         []string           `bson:"inputs"`
-	ExpectedOutput string             `bson:"expected_output"`
+	Label          string   `json:"label"`
+	Inputs         []string `json:"inputs"`
+	ExpectedOutput string   `json:"expected_output"`
+}
+
+type TestCases struct {
+	Testcases []TestCase `json:"testcases"`
 }

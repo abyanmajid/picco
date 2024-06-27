@@ -9,11 +9,10 @@ import (
 
 	judge "github.com/abyanmajid/codemore.io/services/judge/proto/judge"
 	"github.com/abyanmajid/codemore.io/services/judge/utils"
-	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 )
 
-func ListenAndServe(mongoClient *mongo.Client, compilerEndpoint string) {
+func ListenAndServe(compilerEndpoint string, contentFetcherEndpoint string) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", PORT))
 	if err != nil {
 		log.Fatalf("Failed to listen for gRPC: %v", err)
@@ -22,9 +21,9 @@ func ListenAndServe(mongoClient *mongo.Client, compilerEndpoint string) {
 	s := grpc.NewServer()
 
 	judge.RegisterJudgeServiceServer(s, &Service{
-		CompilerEndpoint: compilerEndpoint,
-		Mongo:            mongoClient,
-		Log:              slog.New(utils.StructuredLogHandler(os.Stdout, APP_NAME)),
+		CompilerEndpoint:       compilerEndpoint,
+		ContentFetcherEndpoint: contentFetcherEndpoint,
+		Log:                    slog.New(utils.StructuredLogHandler(os.Stdout, APP_NAME)),
 	})
 
 	log.Printf("gRPC Server started on port %s", PORT)

@@ -1,0 +1,47 @@
+[
+    {
+        "label": "Addition case",
+        "input": [
+            "add",
+            "1",
+            "4"
+        ],
+        "expected_output": "5"
+    },
+    {
+        "label": "Subtraction case",
+        "input": [
+            "subtract",
+            "10",
+            "4"
+        ],
+        "expected_output": "6"
+    },
+    {
+        "label": "Multiplication case",
+        "input": [
+            "multiply",
+            "3",
+            "5"
+        ],
+        "expected_output": "15"
+    },
+    {
+        "label": "Division case",
+        "input": [
+            "divide",
+            "20",
+            "4"
+        ],
+        "expected_output": "5.0"
+    },
+    {
+        "label": "Division by zero case",
+        "input": [
+            "divide",
+            "20",
+            "0"
+        ],
+        "expected_output": "Error: Division by zero"
+    }
+]
