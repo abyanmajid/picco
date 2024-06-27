@@ -1,18 +1,7 @@
-<p align="center">
-  <img src="https://github.com/abyanmajid/codemore.io/assets/108279046/040ecbb0-16a1-4dde-ba37-c06d66a80b80" width="75%" height="auto">
-</p>
+# codemore.io
 
-<p align="center">
-  <a href="https://github.com/abyanmajid/codemore.io/blob/main/LICENSE"><img alt="GPL-3.0 License" src="https://img.shields.io/badge/License-GPL%203.0-blue.svg"></a>
-  <img alt="cicd-badge" src="https://github.com/abyanmajid/codemore.io/actions/workflows/cicd.yml/badge.svg">
-  <img alt="Go" src="https://img.shields.io/badge/Go-%2300ADD8.svg?style=flat&logo=go&logoColor=white">
-  <img alt="Next JS" src="https://img.shields.io/badge/Next-black?style=flat&logo=next.js&logoColor=white">
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white">
-  <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat&logo=Kubernetes&logoColor=white">
-</p>
-<p align="center">
-  <b>codemore.io</b> is a distributed app that offers <i>free programming courses</i> in attempt to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by putting great emphasis on <i>writing lots of code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
-</p>
+<b>codemore.io</b> is a distributed app that offers <i>free programming courses</i> in attempt to help you get out of <i>"tutorial hell"</i>, or simply <i>speed up your learning</i>, all by putting great emphasis on <i>writing lots of code</i>. At <b>codemore.io</b>, you learn programming by solving a bunch of exercises, quizzes, and building projects with varying level of guidance and hints.
+
 
 <!-- <h3 align="center"> Live App 🚀 | Demo 📹 | Documentation 🔍 | Source 📦 </h3> -->
 
@@ -23,36 +12,36 @@ All client requests are sent to the `broker` service (which serves as an API gat
 ```mermaid
 graph TD
     Client["<b>Client</b>"]
-    WS["Web Socket"]
+    Feed["<b>Feed</b><br>(WebSocket)"]
     Broker["<b>Broker</b><br>(REST)"]
     Auth["Third-Party Auth"]
     S3["Cloud Storage"]
     GH["GitHub API"]
     User["<b>User</b><br>(gRPC)"]
     Progression["<b>Progression</b><br>(gRPC)"]
-    Mail["<b>Mail</b><br>(gRPC)"]
-    CF["<b>Content Fetcher</b><br>(gRPC)"]
-    Judge["<b>Judge</b><br>(gRPC)"]
     Compiler["<b>Compiler</b><br>(gRPC)"]
+    Judge["<b>Judge</b><br>(gRPC)"]
+    CF["<b>Content Fetcher</b><br>(gRPC)"]
+    Mail["<b>Mail</b><br>(gRPC)"]
     MongoDB["<b>MongoDB</b>"]
     PostgreSQL["<b>PostgreSQL</b>"]
 
-    Client <--> WS
+    Client <--> Feed
     Client <--> Auth
     Client <--> S3
     Client <--> Broker
 
-    Broker <--> User
-    Broker <--> Progression
     Broker <--> CF
     Broker <--> Compiler
     Broker <--> Judge
+    Broker <--> User
+    Broker <--> Progression
     Broker <--> Mail
 
     User --> PostgreSQL
     Progression --> MongoDB
     Judge <--> Compiler
-    Judge <--> GH
+    Judge <--> CF
     CF <--> GH
 ```
 
