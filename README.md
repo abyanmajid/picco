@@ -56,25 +56,6 @@ graph TD
     CF <--> GH
 ```
 
-There are currently 7 API microservices:
-
-1. `broker`: An API gateway to proxy requests to the corresponding service
-2. `user`: A microservice responsible for CRUD operations on user information
-3. `courses`: A microservice responsible for CRUD operations on course contents
-4. `progression`: A microservice responsible for fetching and updating user progress on courses
-5. `mail`: A microservice responsible for sending mails
-6. `judge`: A microservice responsible for running test cases on code outputs
-7. `compiler`: A microservice responsible for compiling user-submitted code
-
-## Design Choices
-
-- Credentials and OAuth2 token-based authentication with JWT
-- Role-Based Access Control (RBAC) Authorization
-- Asynchronous communication between microservices via gRPC
-- Synchronous communication between client and broker via REST
-- Sandboxing of code execution in a docker container
-- Structured logging to output stream
-
 ## Contributing
 
 1. Get started by forking this repository, clone it to your local device, and create a new branch by running `git checkout -b <branch_name>`
