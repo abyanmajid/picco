@@ -25,13 +25,10 @@
 */.env
 
 # BINARIES
-/broker/broker
-/user/user
-/progression/progression
-/notification/notification
-/mail/mail
-/judge/judge
-/courses/courses
-/compiler/compiler
-
-/content-rest
+/services/broker/broker
+/services/compiler/compiler
+/services/content-fetcher/content-fetcher
+/services/course/course
+/services/judge/judge
+/services/progression/progression
+/services/user/user

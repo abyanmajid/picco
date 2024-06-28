@@ -37,7 +37,14 @@ func (api *Service) routes() http.Handler {
 	// Proxying routes for judge service
 	router.Post("/judge", api.HandleRunTests)
 
-	// ProPxying routes for content service
+	// Proxying routes for course service
+	router.Post("/course", api.HandleCreateCourse)
+	router.Get("/course", api.HandleGetAllCourses)
+	router.Get("/course/{title}", api.HandleGetCourseByTitle)
+	router.Put("/course/{title}", api.HandleUpdateCourseByTitle)
+	router.Delete("/course/{title}", api.HandleDeleteCourseByTitle)
+
+	// Proxying routes for content fetcher service
 	router.Post("/content-fetcher", api.HandleGetContent)
 
 	return router

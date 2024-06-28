@@ -2,6 +2,7 @@ BROKER_BINARY=broker
 USER_BINARY=user
 COMPILER_BINARY=compiler
 JUDGE_BINARY=judge
+COURSE_BINARY=course
 CONTENT_FETCHER_BINARY=content-fetcher
 
 # up: starts all containers in the background without forcing build
@@ -17,7 +18,7 @@ down:
 	@echo "[codemore.io] Containers has successfully been stopped!"
 
 # build: stops docker-compose (if running), builds all projects and starts docker compose
-build: build-broker build-user build-compiler build-judge build-content-fetcher
+build: build-broker build-user build-compiler build-judge build-course build-content-fetcher
 	@echo "[codemore.io] Stopping docker images (if running...)"
 	docker-compose down
 	@echo "[codemore.io] Building (when required) and starting docker images..."
@@ -48,7 +49,13 @@ build-judge:
 	cd ./services/judge && env GOOS=linux CGO_ENABLED=0 go build -o ${JUDGE_BINARY} ./cmd/api
 	@echo "[codemore.io] Judge has successfully been built!"
 
-# build-judge: build linux executable for judge service
+# build-course: build linux executable for course service
+build-course:
+	@echo "[codemore.io] Building course..."
+	cd ./services/course && env GOOS=linux CGO_ENABLED=0 go build -o ${COURSE_BINARY} ./cmd/api
+	@echo "[codemore.io] Course has successfully been built!"
+
+# build-content-fetcher: build linux executable for content fetcher service
 build-content-fetcher:
 	@echo "[codemore.io] Building content-fetcher..."
 	cd ./services/content-fetcher && env GOOS=linux CGO_ENABLED=0 go build -o ${CONTENT_FETCHER_BINARY} ./cmd/api

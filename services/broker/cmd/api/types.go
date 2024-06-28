@@ -6,6 +6,7 @@ import (
 
 	"github.com/abyanmajid/codemore.io/services/broker/proto/compiler"
 	cf "github.com/abyanmajid/codemore.io/services/broker/proto/content-fetcher"
+	"github.com/abyanmajid/codemore.io/services/broker/proto/course"
 	"github.com/abyanmajid/codemore.io/services/broker/proto/judge"
 	"github.com/abyanmajid/codemore.io/services/broker/proto/user"
 	"google.golang.org/grpc"
@@ -16,6 +17,7 @@ type Service struct {
 	CompilerEndpoint       string
 	JudgeEndpoint          string
 	ContentFetcherEndpoint string
+	CourseEndpoint         string
 	Log                    *slog.Logger
 }
 
@@ -52,6 +54,13 @@ type JudgeServiceClient struct {
 
 type ContentFetcherServiceClient struct {
 	Client cf.ContentFetcherServiceClient
+	Conn   *grpc.ClientConn
+	Ctx    context.Context
+	Cancel context.CancelFunc
+}
+
+type CourseServiceClient struct {
+	Client course.CourseServiceClient
 	Conn   *grpc.ClientConn
 	Ctx    context.Context
 	Cancel context.CancelFunc
@@ -96,4 +105,29 @@ type RunTestsRequest struct {
 
 type GetContentRequest struct {
 	Path string `json:"path"`
+}
+
+type Course struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Creator     string   `json:"creator"`
+	Likes       int32    `json:"likes"`
+	Students    []string `json:"students"`
+	Topics      []string `json:"topics"`
+	Modules     []Module `json:"modules"`
+	UpdatedAt   string   `json:"updated_at"`
+	CreatedAt   string   `json:"created_at"`
+}
+
+type Module struct {
+	Id    int32  `json:"id"`
+	Title string `json:"title"`
+	Tasks []Task `json:"tasks"`
+}
+
+type Task struct {
+	Id   int32  `json:"id"`
+	Task string `json:"task"`
+	Type string `json:"type"`
+	Xp   int32  `json:"xp"`
 }

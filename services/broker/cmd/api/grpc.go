@@ -6,6 +6,7 @@ import (
 
 	"github.com/abyanmajid/codemore.io/services/broker/proto/compiler"
 	cf "github.com/abyanmajid/codemore.io/services/broker/proto/content-fetcher"
+	"github.com/abyanmajid/codemore.io/services/broker/proto/course"
 	"github.com/abyanmajid/codemore.io/services/broker/proto/judge"
 	"github.com/abyanmajid/codemore.io/services/broker/proto/user"
 	"google.golang.org/grpc"
@@ -93,6 +94,28 @@ func (api *Service) getContentFetcherServiceClient() (*ContentFetcherServiceClie
 	api.Log.Info("gRPC client created successfully")
 
 	return &ContentFetcherServiceClient{
+		Client: client,
+		Conn:   conn,
+		Ctx:    ctx,
+		Cancel: cancel,
+	}, nil
+}
+
+func (api *Service) getCourseServiceClient() (*CourseServiceClient, error) {
+	api.Log.Info("Creating new gRPC client", "endpoint", api.CourseEndpoint)
+
+	conn, err := grpc.NewClient(api.CourseEndpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		api.Log.Error("Failed to create gRPC client connection", "error", err)
+		return nil, err
+	}
+
+	client := course.NewCourseServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
+	api.Log.Info("gRPC client created successfully")
+
+	return &CourseServiceClient{
 		Client: client,
 		Conn:   conn,
 		Ctx:    ctx,

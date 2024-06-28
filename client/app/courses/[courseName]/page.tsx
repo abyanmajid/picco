@@ -2,11 +2,8 @@ import React from "react";
 import { notFound } from "next/navigation";
 
 import Container from "@/components/common/Container"
-import Title from "@/components/common/Title";
-import Subtitle from "@/components/common/Subtitle";
 import Course from "@/components/courses/Course";
 import { courses, CourseURLMapper } from "@/config/courses"
-import HotCourses from "@/components/landing/HotCourses";
 import { HeroHighlight } from "@/components/ui/hero-highlight";
 
 type Params = {
@@ -21,13 +18,15 @@ export default function CourseSpecificPage({ params }: Params) {
         notFound();
     }
 
+    const spacedCourseName = CourseURLMapper[courseName]
+
     const courseDetails = {
-        title: CourseURLMapper[courseName],
-        description: courses["Introduction to Programming"].description,
-        creator: courses["Introduction to Programming"].creator,
-        creatorProfileUrl: courses["Introduction to Programming"].creatorProfileUrl,
-        courseUrl: courses["Introduction to Programming"].courseUrl,
-        likes: courses["Introduction to Programming"].likes,
+        title: spacedCourseName,
+        description: courses[spacedCourseName].description,
+        creator: courses[spacedCourseName].creator,
+        creatorProfileUrl: courses[spacedCourseName].creatorProfileUrl,
+        courseUrl: courses[spacedCourseName].courseUrl,
+        likes: courses[spacedCourseName].likes,
     }
 
     return (

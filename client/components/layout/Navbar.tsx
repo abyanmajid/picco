@@ -54,10 +54,10 @@ export default async function Navbar() {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <p className="font-bold text-inherit">codemore.io&nbsp;<Chip color="primary" variant="flat" radius="sm">Beta</Chip></p>
+            <div className="font-bold text-inherit">codemore.io&nbsp;<Chip color="primary" variant="flat" radius="sm">Beta</Chip></div>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
+        <ul className="hidden lg:flex gap-8 justify-start ml-2 items-center">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
@@ -68,7 +68,7 @@ export default async function Navbar() {
                 color="foreground"
                 href={item.href}
               >
-                {item.label}
+                {item.label} {item.wip ? <>&nbsp;<Chip color="default" variant="flat" radius="sm">WIP</Chip></> : ""}
               </NextLink>
             </NavbarItem>
           ))}

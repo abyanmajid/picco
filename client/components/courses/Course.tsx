@@ -24,12 +24,6 @@ type courseDetails = {
     likes: number,
 }
 
-type module = {
-    name: string,
-    type: "lecture" | "exercise" | "quiz"
-    xp: number,
-}
-
 type Props = {
     courseDetails: courseDetails,
 }

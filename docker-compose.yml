@@ -26,6 +26,18 @@ services:
     env_file:
       - .env
 
+  content-publisher:
+    container_name: course
+    build:
+      context: ./services/course
+      dockerfile: ./course.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    env_file:
+      - .env
+
   content-fetcher:
     container_name: content-fetcher
     build:

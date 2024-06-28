@@ -7,7 +7,6 @@ import (
 
 const PORT = "50001"
 const APP_NAME = "Judge"
-const DEFAULT_DEVELOPMENT_DB_URL = "mongodb://mongo:27017"
 
 func main() {
 	environment := os.Getenv("ENVIRONMENT")

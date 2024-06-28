@@ -5,16 +5,19 @@ export const siteConfig = {
   description: "Learn at the speed of light by simply writing more code.",
   navItems: [
     {
-      label: "Home",
-      href: "/",
-    },
-    {
       label: "Courses",
       href: "/courses",
+      wip: false,
     },
     {
-      label: "Top Learners",
-      href: "/leaderboard",
+      label: "Competition",
+      href: "#",
+      wip: true,
+    },
+    {
+      label: "Bug Hunt",
+      href: "/bug-hunt",
+      wip: false,
     },
   ],
   navMenuItems: [
