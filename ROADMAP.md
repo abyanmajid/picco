@@ -19,4 +19,5 @@
 
 ### Version 2.0
 
-- [ ] Test 
+- [ ] A `/competition` route for hosting real-time programming competitions
+- [ ] Support for I/O and file reading for the text editor
