@@ -17,7 +17,7 @@
 - [x] Third-party authentication integration
 - [ ] API documentation 
 
-### Version 2.0
+### Version 2.0.0
 
 - [ ] A `/competition` route for hosting real-time programming competitions
 - [ ] Support for I/O and file reading for the text editor
