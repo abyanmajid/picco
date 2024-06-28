@@ -2,4 +2,36 @@ Module 1, Task 2 (Lecture)
 
 # Hello, World!
 
-It is a tradition in the programming community, that your first line of code should output `Hello, World!`.
+It is a tradition in the programming community that your first line of code should say `Hello, World!`. To do this, we use 
+the `print` keyword in python, and we pass in a text `Hello, World!`,
+
+```py
+print("Hello, World!")
+```
+
+Hooray! You can now confidently call yourself a programmer - and an amazing one at that!
+
+### The computer doesn't understand Python!
+
+Let us take a closer look at what just happened. Program instructions, such as the one you just ran, is stored inside a RAM (Random Access Memory) and is then and executed by the CPU (Central Processing Unit). However, the CPU does ***NOT*** understand python - or any programming language for that matter. It only understands machine code, which is represented in binary i.e., 1s and 0s.
+
+There are two primary methods to executing code:
+
+1. ***Compiled:*** The source code is transformed into machine code before execution.
+2. ***Interpreted:*** The source code is executed line by line.
+
+Python is an interpreted language, whereas languages like C++ and Rust are compiled.
+
+### The Python Interpreter
+
+When you clicked "Run", codemore.io invokes the python interpreter - and this is abstracted away from you. The way to invoke the python interpreter is to type `python` and then pass your script as an argument. For example, if your script is saved inside `hello.py`, then you can invoke the python interpreter by running:
+
+```
+python hello.py
+```
+
+The python interpreter is made up of two components: A compiler and the Python Virtual Machine (PVM). The compiler turns each line in your script into an intermediate form called bytecode, which is not the same as machine code! Therefore, it cannot be executed by the CPU. The bytecode is, however, understood and can be executed by the Python Virtual Machine (PVM).
+
+### A note on computational overhead
+
+Interpreted languages are generally less performant (slower) than compiled languages. This is because each time the code is run, the interpreter has to read, parse, and execute each line. Meanwhile, for compiled languages, the compilation is done once and is executed directly by the CPU.
