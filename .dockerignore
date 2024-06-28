@@ -1,0 +1,33 @@
+# Ignore all .exe files in any subdirectory
+**/*.exe
+
+# Ignore all .dll files in any subdirectory
+**/*.dll
+
+# Ignore all .so files in any subdirectory
+**/*.so
+
+# Ignore all .dylib files in any subdirectory
+**/*.dylib
+
+# Ignore all .o files in any subdirectory
+**/*.o
+
+# Ignore output directories
+**/bin
+**/pkg
+
+# Ignore temporary files
+**/*.log
+**/*.tmp
+**/*.temp
+**/*.swp
+
+# Ignore Go dependencies and caches
+**/vendor
+**/.cache
+**/.env
+
+# Ignore IDE and editor directories
+**/.vscode
+**/.idea
