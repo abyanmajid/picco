@@ -10,7 +10,6 @@
     - `/courses/[courseName]/modules/[moduleId]/tasks/[taskId]`, 
     - `/bug-hunt`
 - [ ] Additional second web client for testing microservices
-- [ ] Fully functional CRUD endpoints for 
 - [ ] Complete Introduction to Programming course
 - [ ] Bug report feature
 - [x] GitHub API integration for fetching content
