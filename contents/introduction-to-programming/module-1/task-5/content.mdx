@@ -1,0 +1,54 @@
+Module 1, Task 5 (Lecture)
+
+# Variables, Data Types, and Memory
+
+## Declaration and Assignment
+
+You can think of variables as containers that hold data. In python, you can create a variable by declaring and assigning to it some value:
+
+```py
+x = "Can I have"
+y = 5
+z = "tacos please?"
+print(x, y, z) # This outputs: Can I have 5 tacos please?
+```
+
+During assignment, the variable to which the data will be assigned to is always to the left of `=`. So a line such as `5 = x` is not valid code and will cause an error.
+
+*Aside 1:* The `#` symbol tells the python interpreter that every character that follows it on that line is a comment. Comments are annotations within code that are not executed by the interpreter.
+
+*Aside 2:* `print` can take multiple values and they will print each of them separated by an empty space! We will come back to this on a later module when we would talk about functions.
+
+It's important to note that `=` denotes assignment, not equality! We are essentially telling the python interpreter to assign `5` as the value of `x`. To further illustrate this, take a look at the following snippet:
+
+```py
+x = 5
+y = 10
+x = y
+```
+
+At the end of the script, we have `x = 10` and `y = 10` because `x = y` is not asserting that `x` is equal to `y`, but rather that `y` is assigned to be the value of `x`
+
+### Memory allocation
+
+At a lower level, when we assign a value to a variable, say `x = 5`, Python allocates memory in the computer's RAM to store `5` at a unique location represented by some address. The variable `x` then serves as a pointer to that memory address where `5` is stored.  
+
+## Primitive Data Types
+
+## Type Casting
+
+## Static vs. Dynamic Typing
+
+You can also declare a variable without assigning any value to it. This is done by annotating a type for the variable:
+
+```py
+x: int # declaration
+print(x) # this causes an error
+x = 5 # assignment
+```
+
+In the above snippet, we declared `x` to be a variable of type `int` (short for integer) without assigning to it any value, and we cannot use `x` until we assign to it some value! You should know that Python is a **dynamically typed** language, which means that the types of your variables are inferred by the interpreter at runtime (when you run your script). On the other hand, languages like Java are **statically typed**, which means all variables must be annotated a type. Being a **dynamically typed** language, there is generally no reason to declare variables without assignment in Python.
+
+Though 
+
+## Composite Data Types
