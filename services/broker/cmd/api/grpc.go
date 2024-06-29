@@ -23,7 +23,7 @@ func (api *Service) getUserServiceClient() (*UserServiceClient, error) {
 	}
 
 	client := user.NewUserServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	api.Log.Info("gRPC client created successfully")
 
@@ -45,7 +45,7 @@ func (api *Service) getCompilerServiceClient() (*CompilerServiceClient, error) {
 	}
 
 	client := compiler.NewCompilerServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	api.Log.Info("gRPC client created successfully")
 
@@ -67,7 +67,7 @@ func (api *Service) getJudgeServiceClient() (*JudgeServiceClient, error) {
 	}
 
 	client := judge.NewJudgeServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	api.Log.Info("gRPC client created successfully")
 
@@ -89,7 +89,7 @@ func (api *Service) getContentFetcherServiceClient() (*ContentFetcherServiceClie
 	}
 
 	client := cf.NewContentFetcherServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	api.Log.Info("gRPC client created successfully")
 
@@ -111,7 +111,7 @@ func (api *Service) getCourseServiceClient() (*CourseServiceClient, error) {
 	}
 
 	client := course.NewCourseServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	api.Log.Info("gRPC client created successfully")
 

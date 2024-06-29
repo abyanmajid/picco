@@ -1,14 +1,14 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 
-import { Providers } from "./providers";
+import { Providers, ThemeProviderProps } from "./providers"; // Assuming ThemeProviderProps is imported from providers.tsx
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/layout/Navbar";
 import Container from "@/components/common/Container";
-import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 export const metadata: Metadata = {
   title: {
@@ -43,7 +43,7 @@ export default function RootLayout({
             fontSans.variable,
           )}
         >
-          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark", children }}>
             <Container className="relative flex flex-col h-screen">
               <Navbar />
               {children}

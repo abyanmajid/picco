@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/abyanmajid/codemore.io/services/broker/proto/course"
@@ -82,21 +83,30 @@ func (api *Service) HandleGetAllCourses(w http.ResponseWriter, r *http.Request) 
 }
 
 func (api *Service) HandleGetCourseByTitle(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Handling GetCourseByTitle request")
+
 	client, err := api.getCourseServiceClient()
 	if err != nil {
 		api.errorJSON(w, err)
+		fmt.Println("Failed to get gRPC client:", err)
 		return
 	}
 
 	defer client.Conn.Close()
 	defer client.Cancel()
 
+	fmt.Println("Successfully obtained gRPC client")
+
+	title := chi.URLParam(r, "title")
+
+	// Make gRPC call with timeout
 	c, err := client.Client.GetCourse(client.Ctx, &course.GetCourseRequest{
-		Title: chi.URLParam(r, "title"),
+		Title: title,
 	})
 
 	if err != nil {
 		api.errorJSON(w, err)
+		fmt.Println("Failed to get course:", err)
 		return
 	}
 
@@ -107,6 +117,7 @@ func (api *Service) HandleGetCourseByTitle(w http.ResponseWriter, r *http.Reques
 	}
 
 	api.writeJSON(w, http.StatusOK, responsePayload)
+	fmt.Println("Successfully handled GetCourseByTitle request")
 }
 
 func (api *Service) HandleUpdateCourseByTitle(w http.ResponseWriter, r *http.Request) {

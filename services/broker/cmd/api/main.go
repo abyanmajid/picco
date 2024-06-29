@@ -32,8 +32,6 @@ func SetMicroservices(api *Service) {
 	default:
 		log.Fatal("The ENVIRONMENT environment variable is either not set or is not 'development' or 'production'")
 	}
-
-	fmt.Println("COURSE ENDPOINT:", api.CourseEndpoint)
 }
 
 func main() {
