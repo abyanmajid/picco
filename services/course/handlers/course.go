@@ -73,11 +73,13 @@ func (s *Service) CreateCourse(ctx context.Context, req *course.CreateCourseRequ
 		log.Error("Failed to create course", "course_id", c.ID, "error", err)
 		return nil, err
 	}
-	log.Info("Successfully created course", "coured_id", c.ID)
+	log.Info("Successfully created course", "course_id", c.ID)
 
 	log.Debug("Terminating CreateCourse...")
 
-	return nil, nil
+	return &course.CreateCourseResponse{
+		CreatedCount: 1,
+	}, nil
 }
 
 func (s *Service) GetAllCourses(ctx context.Context, req *course.GetAllCoursesRequest) (*course.GetAllCoursesResponse, error) {
@@ -159,7 +161,7 @@ func (s *Service) UpdateCourse(ctx context.Context, req *course.UpdateCourseRequ
 
 	log.Debug("Updated course fields", "course_id", existingCourse.ID)
 
-	_, err = repo.UpdateCourseByTitle(req.GetTitle(), existingCourse)
+	res, err := repo.UpdateCourseByTitle(req.GetTitle(), existingCourse)
 	if err != nil {
 		log.Error("Failed to update course by title", "course_id", existingCourse.ID, "error", err)
 		return nil, err
@@ -169,7 +171,9 @@ func (s *Service) UpdateCourse(ctx context.Context, req *course.UpdateCourseRequ
 
 	log.Debug("Terminating UpdateCourseByTitle...")
 
-	return &course.UpdateCourseResponse{}, nil
+	return &course.UpdateCourseResponse{
+		UpdatedCount: res.ModifiedCount,
+	}, nil
 }
 
 func (s *Service) DeleteCourse(ctx context.Context, req *course.DeleteCourseRequest) (*course.DeleteCourseResponse, error) {
@@ -181,7 +185,7 @@ func (s *Service) DeleteCourse(ctx context.Context, req *course.DeleteCourseRequ
 
 	log.Info("Deleting course by title", "title", req.GetTitle())
 
-	_, err := repo.DeleteCourseByTitle(req.GetTitle())
+	result, err := repo.DeleteCourseByTitle(req.GetTitle())
 	if err != nil {
 		log.Error("Failed to delete course by title", "title", req.GetTitle(), "error", err)
 		return nil, err
@@ -191,5 +195,7 @@ func (s *Service) DeleteCourse(ctx context.Context, req *course.DeleteCourseRequ
 
 	log.Debug("Terminating DeleteCourseByTitle...")
 
-	return &course.DeleteCourseResponse{}, nil
+	return &course.DeleteCourseResponse{
+		DeletedCount: result.DeletedCount,
+	}, nil
 }

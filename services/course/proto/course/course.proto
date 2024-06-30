@@ -50,7 +50,9 @@ message CreateCourseRequest {
 }
 
 // Response message for creating a new course
-message CreateCourseResponse {}
+message CreateCourseResponse {
+  int64 created_count = 1;
+}
 
 // Request message for retrieving a course by id
 message GetCourseRequest {
@@ -74,15 +76,19 @@ message UpdateCourseRequest {
 }
 
 // Response message for updating an existing course
-message UpdateCourseResponse {}
+message UpdateCourseResponse {
+  int64 updated_count = 1;
+}
 
 // Request message for deleting a course by id
 message DeleteCourseRequest {
- string title = 1;
+  string title = 1;
 }
 
 // Response message for deleting a course by id
-message DeleteCourseResponse {}
+message DeleteCourseResponse {
+  int64 deleted_count = 1;
+}
 
 // Request message for retrieving all courses
 message GetAllCoursesRequest {}
