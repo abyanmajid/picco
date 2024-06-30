@@ -16,15 +16,15 @@ graph TD
     Broker["<b>Broker</b><br>(REST)"]
     Auth["Third-Party Auth"]
     S3["Cloud Storage"]
-    GH["GitHub API"]
-    User["<b>User</b><br>(gRPC)"]
-    Progression["<b>Progression</b><br>(gRPC)"]
+    Epsilon["Epsilon CMS"]
+    Account["<b>Account</b><br>(REST)"]
+    Course["<b>Course</b><br>(REST)"]
+    Progression["<b>Progression</b><br>(REST)"]
     Compiler["<b>Compiler</b><br>(gRPC)"]
-    Judge["<b>Judge</b><br>(gRPC)"]
+    Judge["<b>Judge</b><br>(REST, Goroutined gRPC)"]
     CF["<b>Content Fetcher</b><br>(gRPC)"]
     Mail["<b>Mail</b><br>(gRPC)"]
     MongoDB["<b>MongoDB</b>"]
-    PostgreSQL["<b>PostgreSQL</b>"]
 
     Client <--> Feed
     Client <--> Auth
@@ -34,15 +34,18 @@ graph TD
     Broker <--> CF
     Broker <--> Compiler
     Broker <--> Judge
-    Broker <--> User
+    Broker <--> Account
+    Broker <--> Course
     Broker <--> Progression
     Broker <--> Mail
 
-    User --> PostgreSQL
+    Account --> MongoDB
+    Course --> MongoDB
     Progression --> MongoDB
     Judge <--> Compiler
-    Judge <--> CF
-    CF <--> GH
+    Judge <--> MongoDB
+    CF <--> Epsilon
+    Epsilon --> MongoDB
 ```
 
 ## Contributing
