@@ -17,10 +17,11 @@ graph TD
     Auth["Third-Party Auth"]
     S3["Cloud Storage"]
     Epsilon["Epsilon CMS"]
-    Account["<b>Account</b><br>(gRPC)"]
-    Progression["<b>Progression</b><br>(gRPC)"]
+    Account["<b>Account</b><br>(REST)"]
+    Course["<b>Course</b><br>(REST)"]
+    Progression["<b>Progression</b><br>(REST)"]
     Compiler["<b>Compiler</b><br>(gRPC)"]
-    Judge["<b>Judge</b><br>(gRPC)"]
+    Judge["<b>Judge</b><br>(REST, Goroutined gRPC)"]
     CF["<b>Content Fetcher</b><br>(gRPC)"]
     Mail["<b>Mail</b><br>(gRPC)"]
     MongoDB["<b>MongoDB</b>"]
@@ -34,10 +35,12 @@ graph TD
     Broker <--> Compiler
     Broker <--> Judge
     Broker <--> Account
+    Broker <--> Course
     Broker <--> Progression
     Broker <--> Mail
 
     Account --> MongoDB
+    Course --> MongoDB
     Progression --> MongoDB
     Judge <--> Compiler
     Judge <--> MongoDB
