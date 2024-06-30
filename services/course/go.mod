@@ -7,7 +7,7 @@ require (
 	github.com/go-chi/cors v1.2.1
 	go.mongodb.org/mongo-driver v1.16.0
 	google.golang.org/grpc v1.64.0
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
