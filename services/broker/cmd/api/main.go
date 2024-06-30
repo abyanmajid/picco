@@ -26,7 +26,7 @@ func (api *BrokerService) setEndpoints() {
 	api.CompilerEndpoint = "compiler:50001"
 	api.JudgeEndpoint = "judge:50001"
 	api.ContentFetcherEndpoint = "content-fetcher:50001"
-	api.CourseEndpoint = "course:50001"
+	api.CourseEndpoint = "http://course"
 }
 
 func (api *BrokerService) routes() http.Handler {

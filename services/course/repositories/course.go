@@ -14,7 +14,7 @@ type CourseRepository struct {
 	Collection *mongo.Collection
 }
 
-func (r *CourseRepository) CreateCourse(course *models.Course) (interface{}, error) {
+func (r *CourseRepository) CreateCourse(course *models.WriteCourse) (*mongo.InsertOneResult, error) {
 	existingCourse, err := r.GetCourseByTitle(course.Title)
 	if err != nil {
 		return nil, err
@@ -32,13 +32,13 @@ func (r *CourseRepository) CreateCourse(course *models.Course) (interface{}, err
 	return result, nil
 }
 
-func (r *CourseRepository) GetAllCourses() ([]models.Course, error) {
+func (r *CourseRepository) GetAllCourses() ([]models.ReadCourse, error) {
 	results, err := r.Collection.Find(context.TODO(), bson.D{})
 	if err != nil {
 		return nil, err
 	}
 
-	var courses []models.Course
+	var courses []models.ReadCourse
 	err = results.All(context.TODO(), &courses)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode results: %s", err.Error())
@@ -47,12 +47,12 @@ func (r *CourseRepository) GetAllCourses() ([]models.Course, error) {
 	return courses, nil
 }
 
-func (r *CourseRepository) GetCourseByTitle(title string) (*models.Course, error) {
-	var course models.Course
+func (r *CourseRepository) GetCourseByTitle(title string) (*models.ReadCourse, error) {
+	var course models.ReadCourse
 
 	err := r.Collection.FindOne(
 		context.TODO(),
-		bson.D{{Key: "id", Value: title}},
+		bson.D{{Key: "title", Value: title}},
 	).Decode(&course)
 
 	if err != nil {
@@ -65,7 +65,7 @@ func (r *CourseRepository) GetCourseByTitle(title string) (*models.Course, error
 	return &course, nil
 }
 
-func (r *CourseRepository) UpdateCourseByTitle(title string, updatedCourseDetails *models.Course) (*mongo.UpdateResult, error) {
+func (r *CourseRepository) UpdateCourseByTitle(title string, updatedCourseDetails *models.WriteCourse) (*mongo.UpdateResult, error) {
 	result, err := r.Collection.UpdateOne(
 		context.TODO(),
 		bson.D{{Key: "title", Value: title}},
