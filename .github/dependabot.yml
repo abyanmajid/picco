@@ -1,55 +1,43 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/web/ui"
+    directory: "/client"
     schedule:
       interval: daily
     target-branch: main
 
   - package-ecosystem: gomod
-    directory: "/broker"
+    directory: "/services/broker"
     schedule:
       interval: daily
     target-branch: main
 
   - package-ecosystem: gomod
-    directory: "/compiler"
+    directory: "/services/compiler"
     schedule:
       interval: daily
     target-branch: main
 
   - package-ecosystem: gomod
-    directory: "/judge"
+    directory: "/services/judge"
     schedule:
       interval: daily
     target-branch: main
 
   - package-ecosystem: gomod
-    directory: "/mail"
+    directory: "/services/course"
     schedule:
       interval: daily
     target-branch: main
 
   - package-ecosystem: gomod
-    directory: "/notification"
+    directory: "/services/account"
     schedule:
       interval: daily
     target-branch: main
 
   - package-ecosystem: gomod
-    directory: "/user"
-    schedule:
-      interval: daily
-    target-branch: main
-
-  - package-ecosystem: gomod
-    directory: "/courses"
-    schedule:
-      interval: daily
-    target-branch: main
-
-  - package-ecosystem: gomod
-    directory: "/progression"
+    directory: "/services/progression"
     schedule:
       interval: daily
     target-branch: main
