@@ -14,19 +14,19 @@ services:
     env_file:
       - .env
 
-  user:
-    container_name: user
-    build:
-      context: ./services/user
-      dockerfile: ./user.dockerfile
-    restart: always
-    deploy:
-      mode: replicated
-      replicas: 1
-    env_file:
-      - .env
+  # user:
+  #   container_name: user
+  #   build:
+  #     context: ./services/user
+  #     dockerfile: ./user.dockerfile
+  #   restart: always
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #   env_file:
+  #     - .env
 
-  content-publisher:
+  course:
     container_name: course
     build:
       context: ./services/course
@@ -74,25 +74,15 @@ services:
     env_file:
       - .env
 
-  postgres:
-    container_name: db-users
-    image: 'postgres:14.2'
-    ports:
-      - "5432:5432"
-    deploy:
-      mode: replicated
-      replicas: 1
-    env_file:
-      - .env
-    volumes:
-      - ./db-data/postgres/:/var/lib/postgresql/data/
-
-  mongo:
-    container_name: db-testcases
-    image: 'mongo:4.2.16-bionic'
-    ports:
-      - "27017:27017"
-    env_file:
-      - .env
-    volumes:
-      - ./db-data/mongo/:/data/db
+    # # Uncomment the following to work with the mongo database in a container
+  # mongo:
+  #   container_name: mongo
+  #   image: 'mongo:4.2.16-bionic'
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     MONGO_INITDB_DATABASE: db
+  #     MONGO_INITDB_ROOT_USERNAME: mongo
+  #     MONGO_INITDB_ROOT_PASSWORD: mongo  
+  #   volumes:
+  #     - ./db-data/mongo/:/data/db

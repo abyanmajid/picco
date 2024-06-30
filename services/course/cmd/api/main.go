@@ -5,48 +5,35 @@ import (
 	"log"
 	"os"
 
-	"github.com/abyanmajid/codemore.io/services/course/utils"
+	"github.com/abyanmajid/codemore.io/services/course/handlers"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const PORT = "50001"
-const APP_NAME = "Course"
-const DEFAULT_DEVELOPMENT_DB_URL = "mongodb://mongo:27017"
-
 func main() {
-	dbURL, username, password := loadEnv()
-
-	ctx := context.TODO()
-	mongoClient, err := utils.ConnectToDB(ctx, dbURL, username, password)
-	if err != nil {
-		return
+	uri := os.Getenv("DB_URI")
+	if uri == "" {
+		log.Fatal("Set your 'DB_URI' environment variable.")
 	}
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+	if err != nil {
+		panic(err)
+	}
+
 	defer func() {
-		if err = mongoClient.Disconnect(ctx); err != nil {
-			log.Panic()
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
 		}
 	}()
 
-	ListenAndServe(mongoClient)
-}
-
-func loadEnv() (string, string, string) {
-	environment := os.Getenv("ENVIRONMENT")
-	var dbURL string
-	var username string
-	var password string
-
-	switch environment {
-	case "development":
-		dbURL = DEFAULT_DEVELOPMENT_DB_URL
-		username = "mongo"
-		password = "mongo"
-	case "production":
-		dbURL = os.Getenv("PRODUCTION_DB_URL")
-		username = os.Getenv("PRODUCTION_DB_USERNAME")
-		password = os.Getenv("PRODUCTION_DB_PASSWORD")
-	default:
-		log.Fatal("The ENVIRONMENT environment variable is either not set or is not 'development' or 'production'")
+	params := handlers.CourseServiceParameters{
+		Port:       "50001",
+		App:        "Course",
+		Client:     client,
+		Database:   "db",
+		Collection: "courses",
 	}
 
-	return dbURL, username, password
+	handlers.ListenAndServeCourse(params)
 }

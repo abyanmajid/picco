@@ -1,5 +1,0 @@
-syntax = "proto3";
-
-package progression;
-
-option go_package = "/progression";

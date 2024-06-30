@@ -18,7 +18,7 @@ down:
 	@echo "[codemore.io] Containers has successfully been stopped!"
 
 # build: stops docker-compose (if running), builds all projects and starts docker compose
-build: build-broker build-user build-compiler build-judge build-course build-content-fetcher
+build: build-broker build-compiler build-judge build-course build-content-fetcher
 	@echo "[codemore.io] Stopping docker images (if running...)"
 	docker-compose down
 	@echo "[codemore.io] Building (when required) and starting docker images..."
@@ -31,11 +31,11 @@ build-broker:
 	cd ./services/broker && env GOOS=linux CGO_ENABLED=0 go build -o ${BROKER_BINARY} ./cmd/api
 	@echo "[codemore.io] Broker has successfully been built!"
 
-# build-user: build linux executable for user service
-build-user:
-	@echo "[codemore.io] Building user..."
-	cd ./services/user && env GOOS=linux CGO_ENABLED=0 go build -o ${USER_BINARY} ./cmd/api
-	@echo "[codemore.io] User has successfully been built!"
+# # build-user: build linux executable for user service
+# build-user:
+# 	@echo "[codemore.io] Building user..."
+# 	cd ./services/user && env GOOS=linux CGO_ENABLED=0 go build -o ${USER_BINARY} ./cmd/api
+# 	@echo "[codemore.io] User has successfully been built!"
 
 # build-compiler: build linux executable for compiler service
 build-compiler:
